@@ -1,0 +1,111 @@
+Target _CompileToNative:
+    /Library/Frameworks/Xamarin.Mac.framework/Versions/Current/bin/mmp @/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/response-file.rsp -v -v -v -v 
+    Provided arguments:
+        @/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/response-file.rsp
+    Provided arguments:
+            '/target-framework:Xamarin.Mac,Version=v2.0,Profile=Mobile'
+            --http-message-handler=HttpClientHandler
+            --cache=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache
+            --root-assembly=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.exe
+            --sdkroot=/Applications/Xcode_12GM.app/Contents/Developer
+            /output:/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/
+            /name:Hello.macOS
+            /arch:x86_64
+            /minos=10.15
+            /linksdkonly
+            /assembly:/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/lib/mono/Xamarin.Mac/mscorlib.dll
+            /assembly:/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/lib/mono/Xamarin.Mac/System.Core.dll
+            /assembly:/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/lib/mono/Xamarin.Mac/System.dll
+            /assembly:/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/lib/mono/Xamarin.Mac/Facades/System.Drawing.Common.dll
+            /assembly:/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/lib/mono/Xamarin.Mac/Xamarin.Mac.dll
+        -v
+        -v
+        -v
+        -v
+    Using Xcode 12.0 (12A7208) found in /Applications/Xcode_12GM.app/Contents/Developer
+    Defaulting registrar to 'Static'
+    Enabled optimizations: remove-uithread-checks, dead-code-elimination, blockliteral-setupblock, inline-dynamic-registration-supported, static-block-to-delegate-lookup, trim-architectures, inline-is-arm64-calling-convention, cctor-beforefieldinit, custom-attributes-removal
+    Xamarin.Mac 6.20.2.2 (d16-7): 817b6f72a
+    Selected target framework: Xamarin.Mac,Version=v2.0,Profile=Mobile; API: Unified
+    Selected Linking: 'SDKOnly'
+    Loaded assembly 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/mscorlib.dll
+    Loaded assembly 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Core.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Mono.Security, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756'
+        References: 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+        References: 'System.Numerics, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+    Loaded assembly 'Mono.Security, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/Mono.Security.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+    Loaded assembly 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Xml.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Numerics, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Numerics.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/Facades/System.Drawing.Common.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'Xamarin.Mac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/x86_64/mobile/Xamarin.Mac.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
+        References: 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' from /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Net.Http.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Xamarin.Mac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'Hello.macOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' from /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.exe
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Xamarin.Mac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/mscorlib.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Core.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/Mono.Security.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Xml.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Numerics.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/Facades/System.Drawing.Common.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/x86_64/mobile/Xamarin.Mac.dll
+    Added assembly /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/mono/Xamarin.Mac/System.Net.Http.dll
+    Added assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.exe
+    Optimization 'inline-intptr-size' enabled for assembly 'Xamarin.Mac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'.
+    Linking with the framework Security because it's referenced by a module reference in mscorlib.dll
+    Linking with the framework Security because it's referenced by a module reference in Mono.Security.dll
+    Linking with the framework Foundation because it's referenced by a module reference in Xamarin.Mac.dll
+    Linking with the framework Carbon because it's referenced by a module reference in Xamarin.Mac.dll
+    Linking with the framework AppKit because it's referenced by a module reference in Xamarin.Mac.dll
+    Target '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/libmono-native.dylib' does not exist.
+    Copied /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/libmono-native-unified.dylib to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/libmono-native.dylib
+    Target '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.app/Contents/MonoBundle/libmono-native.dylib' does not exist.
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/libmono-native.dylib to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.app/Contents/MonoBundle/libmono-native.dylib
+    Generating static registrar for mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    Generating static registrar for System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    Generating static registrar for System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    Generating static registrar for Mono.Security, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756
+    Generating static registrar for System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    Generating static registrar for System.Numerics, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Generating static registrar for System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+    Generating static registrar for Xamarin.Mac, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065
+    Generating static registrar for System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+    Generating static registrar for Hello.macOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/registrar.m' does not exist, creating it.
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/registrar.h' does not exist, creating it.
+    /Library/Frameworks/Mono.framework/Commands/pkg-config --cflags mono-2
+    /Library/Frameworks/Mono.framework/Commands/pkg-config --variable=libdir mono-2
+    Adding Framework Security for mscorlib.dll
+    Adding Framework Security for Mono.Security.dll
+    Adding Framework Foundation for Xamarin.Mac.dll
+    Adding Framework Carbon for Xamarin.Mac.dll
+    Adding Framework AppKit for Xamarin.Mac.dll
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/exported-symbols-list' does not exist, creating it.
+    xcrun -f clang
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -mmacosx-version-min=10.15 -arch x86_64 -fobjc-runtime=macosx-10.15 -Wno-unguarded-availability-new -std=c++14 -ObjC -framework AppKit -framework Foundation -framework Security -framework Carbon -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/libxammac.a -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.app/Contents/MacOS/Hello.macOS -D_THREAD_SAFE -I/Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/pkgconfig/../../include/mono-2.0 /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/pkgconfig/../../lib/libmonosgen-2.0.a /Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/lib/pkgconfig/../../lib/libmono-native-unified.a -framework GSS -lz -liconv -lc++ -x objective-c++ -stdlib=libc++ -I/Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2/include /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/registrar.m -fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/obj/Release/mmp-cache/main.m
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS/bin/Release/Hello.macOS.app/Contents/Resources/runtime-options.plist' does not exist, creating it.
+    bundling complete
+    
