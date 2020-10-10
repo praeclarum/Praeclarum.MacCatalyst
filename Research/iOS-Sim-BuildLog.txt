@@ -31,6 +31,12 @@ Target _CompileToNative:
         -v
         -v
     Using Xcode 12.0 (12A7208) found in /Applications/Xcode_12GM.app/Contents/Developer
+
+
+
+
+
+
     Xamarin.iOS 14.0.0.0 (xcode12): 7ec3751a1 using framework: /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator14.0.sdk
     A full rebuild will be performed because the cache is either incomplete or entirely missing.
     A full rebuild has been forced because the cache for Hello.iOS is not valid.
@@ -120,6 +126,7 @@ Target _CompileToNative:
     Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhoneSimulator/Release/mtouch-cache/2-PreBuild/System.Drawing.Common.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhoneSimulator/Release/mtouch-cache/3-Build/System.Drawing.Common.dll
     Created task scheduler with concurrency 20.
     Could not resolve the module reference System in mscorlib.dll
+
     Linking with the framework CoreFoundation because it's referenced by a module reference in mscorlib.dll
     Linking with the framework Security because it's referenced by a module reference in mscorlib.dll
     Linking with the framework MetalKit because it's referenced by a module reference in Xamarin.iOS.dll
@@ -136,6 +143,10 @@ Target _CompileToNative:
     Linking with the framework SystemConfiguration because it's referenced by a module reference in System.dll
     Linking with the framework Security because it's referenced by a module reference in Mono.Security.dll
     Could not resolve the module reference System in System.Core.dll
+    
+    
+    
+    
     Adding mono-native library libmono-native-unified for Xamarin.Bundler.Application.
     Adding GSS framework reference.
     Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhoneSimulator/Release/mtouch-cache/x86_64/main.m must be rebuilt.
@@ -159,4 +170,3 @@ Target _CompileToNative:
     File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhoneSimulator/Release/Hello.iOS.app/runtime-options.plist' does not exist, creating it.
     /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhoneSimulator/Release/Hello.iOS.app built successfully.
     Creating "bin/iPhoneSimulator/Release/mtouch.stamp" because "AlwaysCreate" was specified.
-    

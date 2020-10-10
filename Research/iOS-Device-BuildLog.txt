@@ -1,0 +1,210 @@
+Target _CompileToNative:
+    /Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch @/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/response-file.rsp -v -v -v -v 
+    Provided arguments:
+        @/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/response-file.rsp
+    Provided arguments:
+            --sgen-conc
+            '/target-framework:Xamarin.iOS,Version=v1.0'
+            --http-message-handler=NSUrlSessionHandler
+            --cache=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache
+            --root-assembly=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.exe
+            --sdkroot=/Applications/Xcode_12GM.app/Contents/Developer
+            --dev=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app
+            --executable=Hello.iOS
+            --linksdkonly
+            --sdk=14.0
+            --targetver=14.0
+            --aot-options=-O=-float32
+            --abi=arm64
+            --symbollist=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-symbols.list
+            --dsym=no
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/mscorlib.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/System.Core.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/System.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/Facades/System.Drawing.Common.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/System.Numerics.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/System.Numerics.Vectors.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/System.Xml.dll
+            -r=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll
+        -v
+        -v
+        -v
+        -v
+    Using Xcode 12.0 (12A7208) found in /Applications/Xcode_12GM.app/Contents/Developer
+    Xamarin.iOS 14.0.0.0 (xcode12): 7ec3751a1 using framework: /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk
+    A full rebuild will be performed because the cache is either incomplete or entirely missing.
+    A full rebuild has been forced because the cache for Hello.iOS is not valid.
+    Loaded assembly 'Hello.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null' from /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.exe
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Xamarin.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'
+    Loaded assembly 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/mscorlib.dll
+    Loaded assembly 'Xamarin.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/../../64bits/Xamarin.iOS.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
+        References: 'System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Mono.Security, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756'
+        References: 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+        References: 'System.Numerics, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+    Loaded assembly 'Mono.Security, Version=2.0.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/Mono.Security.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+    Loaded assembly 'System.Xml, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Xml.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Numerics, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Numerics.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Core.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Net.Http.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'Xamarin.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'
+        References: 'System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Loaded assembly 'System.Drawing.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51' from /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/Facades/System.Drawing.Common.dll
+        References: 'mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+        References: 'System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e'
+    Enabled optimizations: remove-uithread-checks, dead-code-elimination, inline-isdirectbinding, inline-runtime-arch, blockliteral-setupblock, register-protocols, inline-dynamic-registration-supported, static-block-to-delegate-lookup, inline-is-arm64-calling-convention, seal-and-devirtualize, cctor-beforefieldinit, custom-attributes-removal
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.exe to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Hello.iOS.exe
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/mscorlib.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/mscorlib.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/mscorlib.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/mscorlib.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/../../64bits/Xamarin.iOS.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Xamarin.iOS.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/../../64bits/Xamarin.iOS.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Xamarin.iOS.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/Mono.Security.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Mono.Security.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/Mono.Security.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Mono.Security.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Xml.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Xml.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Xml.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Xml.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Numerics.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Numerics.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Numerics.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Numerics.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Core.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Core.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Core.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Core.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Net.Http.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Net.Http.dll
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/System.Net.Http.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Net.Http.pdb
+    Copied /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/lib/mono/Xamarin.iOS/Facades/System.Drawing.Common.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Drawing.Common.dll
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Hello.iOS.exe'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/mscorlib.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Xamarin.iOS.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Mono.Security.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Xml.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Numerics.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Core.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Net.Http.dll'
+    Loaded '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/System.Drawing.Common.dll'
+    Linking /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/1-Link/Hello.iOS.exe into /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild using mode 'SDKOnly'
+    Optimization dynamic registrar removal: enabled
+    Optimization 'inline-intptr-size' enabled for assembly 'Xamarin.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065'.
+    The linker removed the assembly 'Mono.Security' from 'Hello.iOS' since there is no more reference to it.
+    The linker removed the assembly 'System.Xml' from 'Hello.iOS' since there is no more reference to it.
+    The linker removed the assembly 'System.Numerics' from 'Hello.iOS' since there is no more reference to it.
+    The linker removed the assembly 'System.Core' from 'Hello.iOS' since there is no more reference to it.
+    The linker removed the assembly 'System.Net.Http' from 'Hello.iOS' since there is no more reference to it.
+    The linker removed the assembly 'System.Drawing.Common' from 'Hello.iOS' since there is no more reference to it.
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/Hello.iOS.exe to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/mscorlib.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/mscorlib.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.pdb
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/Xamarin.iOS.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/Xamarin.iOS.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.pdb
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/System.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/2-PreBuild/System.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.pdb
+    Created task scheduler with concurrency 20.
+    Could not resolve the module reference System in mscorlib.dll
+    Building Hello.iOS.exe from Hello.iOS.exe
+    Building mscorlib.dll from mscorlib.dll
+    Building Xamarin.iOS.dll from Xamarin.iOS.dll
+    Building System.dll from System.dll
+    Adding mono-native library libmono-native-unified for Xamarin.Bundler.Application.
+    Adding GSS framework reference.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.h, /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.m must be rebuilt.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.m must be rebuilt.
+    Generating static registrar for Hello.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.aotdata.arm64, /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.s must be rebuilt.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.aotdata.arm64, /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.s must be rebuilt.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.aotdata.arm64, /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.s must be rebuilt.
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.m' does not exist, creating it.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.aotdata.arm64, /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.s must be rebuilt.
+    MONO_PATH=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/bin/arm64-darwin-mono-sgen --debug -O=gsharedvt -O=-float32 --aot=mtriple=arm64-ios,data-outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.aotdata.arm64,static,asmonly,direct-icalls,full,nodebug,dwarfdebug,direct-pinvoke,msym-dir=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym,outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.s /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll
+    MONO_PATH=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/bin/arm64-darwin-mono-sgen --debug -O=gsharedvt -O=-float32 --aot=mtriple=arm64-ios,data-outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.aotdata.arm64,static,asmonly,direct-icalls,full,nodebug,dwarfdebug,direct-pinvoke,msym-dir=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym,outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.s /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll
+    MONO_PATH=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/bin/arm64-darwin-mono-sgen --debug -O=gsharedvt -O=-float32 --aot=mtriple=arm64-ios,data-outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.aotdata.arm64,static,asmonly,direct-icalls,full,nodebug,dwarfdebug,msym-dir=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym,outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.s /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll
+    MONO_PATH=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/bin/arm64-darwin-mono-sgen --debug -O=gsharedvt -O=-float32 --aot=mtriple=arm64-ios,data-outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.aotdata.arm64,static,asmonly,direct-icalls,full,nodebug,dwarfdebug,msym-dir=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym,outfile=/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.s /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.o must be rebuilt.
+    Generating static registrar for mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    Generating static registrar for Xamarin.iOS, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065
+    Generating static registrar for System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.m' does not exist, creating it.
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.h' does not exist, creating it.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/registrar.o must be rebuilt.
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -stdlib=libc++ -gdwarf-2 -std=c++14 -I/Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/include -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.o -x objective-c++ -D MONOTOUCH /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.m
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Wno-receiver-forward-class -Wno-objc-missing-super-calls -Wno-unguarded-availability-new -stdlib=libc++ -gdwarf-2 -std=c++14 -I/Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/include -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/registrar.o -x objective-c++ /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.m
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.o must be rebuilt.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.o must be rebuilt.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.o must be rebuilt.
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.o -x assembler /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.s
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.o -x assembler /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.s
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.o -x assembler /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.s
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.o must be rebuilt.
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -Qunused-arguments -miphoneos-version-min=14.0 -arch arm64 -c -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.o -x assembler /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.s
+    In file included from /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.m:2:
+    /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.h(23,43): warning GBD8E3C1A: 'retain (or strong)' attribute on property 'window' does not match the property inherited from 'UIWindowSceneDelegate' [-Wproperty-attribute-mismatch]
+            @property (nonatomic, assign) UIWindow * window;
+                                                     ^
+    /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/registrar.h(42,43): warning GBD8E3C1A: 'retain (or strong)' attribute on property 'window' does not match the property inherited from 'UIApplicationDelegate' [-Wproperty-attribute-mismatch]
+            @property (nonatomic, assign) UIWindow * window;
+                                                     ^
+    2 warnings generated.
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS must be rebuilt.
+    /Applications/Xcode_12GM.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -framework UIKit -framework Foundation -weak_framework CFNetwork -weak_framework GSS /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/registrar.o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/main.o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.exe.o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.dll.o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.dll.o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.dll.o /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/lib/libmonosgen-2.0.a /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/lib/libxamarin.a /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/lib/libmono-native-unified.a -force_load /Library/Frameworks/Xamarin.iOS.framework/Versions/14.0.0.0/SDKs/MonoTouch.iphoneos.sdk/usr/lib/libapp.a -Wl,-pie -arch arm64 -miphoneos-version-min=14.0 -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk -lz -liconv -lz -o /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS -dead_strip -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor -u _UIApplicationMain
+    Target(s) /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS must be rebuilt.
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app.mSYM/manifest.xml' does not exist, creating it.
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/Hello.iOS.exe
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/Hello.iOS.aotdata.arm64
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/mscorlib.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/mscorlib.pdb
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/mscorlib.aotdata.arm64
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/Xamarin.iOS.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/Xamarin.iOS.pdb
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/Xamarin.iOS.aotdata.arm64
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/System.dll
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.pdb to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/System.pdb
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Msym/Msym/tmp/System.aotdata.arm64
+    Stripping assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS.exe
+    /Library/Frameworks/Mono.framework/Versions/Current/bin/mono /Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/mono-cil-strip.exe /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS.exe
+    Mono CIL Stripper
+    
+    Assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Hello.iOS.exe stripped out into /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS.exe
+    
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Hello.iOS.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Hello.iOS.aotdata.arm64
+    Stripping assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/mscorlib.dll
+    /Library/Frameworks/Mono.framework/Versions/Current/bin/mono /Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/mono-cil-strip.exe /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/mscorlib.dll
+    Mono CIL Stripper
+    
+    Assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/mscorlib.dll stripped out into /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/mscorlib.dll
+    
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/mscorlib.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/mscorlib.aotdata.arm64
+    Stripping assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Xamarin.iOS.dll
+    /Library/Frameworks/Mono.framework/Versions/Current/bin/mono /Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/mono-cil-strip.exe /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Xamarin.iOS.dll
+    Mono CIL Stripper
+    
+    Assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/Xamarin.iOS.dll stripped out into /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Xamarin.iOS.dll
+    
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/Xamarin.iOS.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/Xamarin.iOS.aotdata.arm64
+    Stripping assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/System.dll
+    /Library/Frameworks/Mono.framework/Versions/Current/bin/mono /Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/mono-cil-strip.exe /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/System.dll
+    Mono CIL Stripper
+    
+    Assembly /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/3-Build/System.dll stripped out into /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/System.dll
+    
+    Copied /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/obj/iPhone/Release/mtouch-cache/arm64/System.aotdata.arm64 to /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/System.aotdata.arm64
+    File '/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app/NOTICE' does not exist, creating it.
+    /Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS/bin/iPhone/Release/Hello.iOS.app built successfully.
+    Creating "bin/iPhone/Release/mtouch.stamp" because "AlwaysCreate" was specified.
+    
