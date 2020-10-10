@@ -1,20 +1,21 @@
 #!/bin/bash
 
 set -e
-set -x
+# set -x
 set -u
 
 # INPUT VARIABLES
-APPNAME="Hello.macOS"
-PROJDIR="/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.macOS"
+APPNAME="Hello.iOS"
+PROJDIR="/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS"
 
 # ENVIRONMENT VARIABLES
 CLANG=$(xcrun -f clang)
 XAMMACDIR="/Library/Frameworks/Xamarin.Mac.framework/Versions/6.20.2.2"
 
 # COMPUTED VARIABLED
-GENCODEDIR="$PROJDIR/obj/Release/mmp-cache"
-OUTDIR="$PROJDIR/bin/Release/$APPNAME.app/Contents/MacOS"
+GENCODEDIR="$PROJDIR/obj/iPhone/Release/mtouch-cache"
+OUTDIR="."
+
 CFLAGS="-mmacosx-version-min=10.15 -arch x86_64 -fobjc-runtime=macosx-10.15 -Wno-unguarded-availability-new -std=c++14 -ObjC"
 CFLAGS2="-lz -liconv -lc++ -x objective-c++ -stdlib=libc++"
 CFLAGS3="-fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot /Applications/Xcode_12GM.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk"
@@ -25,7 +26,7 @@ US="-u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalT
 OUT="$OUTDIR/$APPNAME"
 INCLUDES="-I$XAMMACDIR/include/mono-2.0 -I$XAMMACDIR/include"
 LINKS="$XAMMACDIR/lib/libmonosgen-2.0.a $XAMMACDIR/lib/libmono-native-unified.a"
-COMPILES="$GENCODEDIR/registrar.m macmain.m"
+COMPILES="$GENCODEDIR/registrar.m catmain.m"
 
 # COMPILE AND LINK
 echo Building $APPNAME
