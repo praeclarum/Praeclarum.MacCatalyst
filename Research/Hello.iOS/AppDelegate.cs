@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using UIKit;
 
 namespace Hello.iOS
@@ -8,6 +9,12 @@ namespace Hello.iOS
     [Register("AppDelegate")]
     public class AppDelegate : UIResponder, IUIApplicationDelegate
     {
+
+		public AppDelegate (IntPtr handle)
+            : base (handle)
+		{
+			Console.WriteLine ("Created app delegate");
+		}
 
         [Export("window")]
         public UIWindow Window { get; set; }
