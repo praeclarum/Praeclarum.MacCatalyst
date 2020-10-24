@@ -14,6 +14,12 @@ namespace Hello.iOS
         {
             base.ViewDidLoad();
             // Perform any additional setup after loading the view, typically from a nib.
+            var label = new UILabel {
+                Text = "Hello Cat Frank",
+                Font = UIFont.SystemFontOfSize (44),
+            };
+            label.Frame = View.Bounds;
+            View.AddSubview (label);
         }
 
         public override void DidReceiveMemoryWarning()

@@ -5,16 +5,17 @@ set -x
 
 cd /Users/fak/Projects/mono
 
-# From run-jenkins.sh
-
 export XCODE_DIR=/Applications/Xcode_12.0.0.app/Contents/Developer
 export MACOS_VERSION=10.15
 
-pwd
-# echo "ENABLE_MAC=1" > sdks/Make.config
-# make -C sdks/builds configure-mac
+# Configure
 
-# make -C sdks/builds build-mac
+# echo "ENABLE_MACCAT=1" > sdks/Make.config
+# rm sdks/builds/.stamp* && rm -r sdks/builds/maccat-mac64-release  && rm -r sdks/builds/maccat-mac64-release.config.cache
+# make -C sdks/builds configure-maccat
 
-make -C sdks/builds archive-mac
+# make V=1 -C sdks/builds build-maccat
+# make -j 10 -C sdks/builds build-maccat
+
+make -C sdks/builds archive-maccat
 
