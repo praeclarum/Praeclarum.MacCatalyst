@@ -9,8 +9,9 @@ APPNAME="Hello.iOS"
 PROJDIR="/Users/fak/Dropbox/Projects/Catalyst/Research/Hello.iOS"
 
 ASSEMBLIES_DIR="$PROJDIR/obj/iPhone/Release/mtouch-cache/1-Link"
+LINKED_ASSEMBLIES_DIR="$PROJDIR/obj/iPhone/Release/mtouch-cache/3-Build"
 
-APP_CONTENTS_DIR="Hi.app/Contents"
+APP_DIR="Hi.app"
 
 REGISTRAR_DIR="$PROJDIR/obj/iPhone/Release/mtouch-cache"
 REGISTRAR_SOURCE="$REGISTRAR_DIR/registrar.m"
@@ -28,10 +29,10 @@ CFLAGS2="-lz -liconv -lc++ -x objective-c++ -stdlib=libc++"
 CFLAGS3="-fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot $MACSDK"
 DEFINES="-D_THREAD_SAFE"
 # FRAMEWORKS="-framework AppKit -framework Foundation -framework Security -framework Carbon -framework GSS"
-FRAMEWORKS="-iframework $MACSDK/System/iOSSupport/System/Library/Frameworks -framework Foundation"
+FRAMEWORKS="-iframework $MACSDK/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework UIKit"
 XAMMACLIB="$XAMMACCATDIR/lib/libxammaccat.a"
 US="-u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor"
-OUT="$APP_CONTENTS_DIR/MacOS/$APPNAME"
+OUT="$APP_DIR/Contents/MacOS/$APPNAME"
 INCLUDES="-I$MONOMACCATDIR/include/mono-2.0 -I$XAMMACCATDIR/include"
 LINKS="$MONOMACCATDIR/lib/libmonosgen-2.0.a $MONOMACCATDIR/lib/libmono-native.a"
 COMPILES="catmain.m"
@@ -43,4 +44,7 @@ $CLANG $CFLAGS $FRAMEWORKS $US $XAMMACLIB -o $OUT $DEFINES $INCLUDES $LINKS $CFL
 
 echo Built $OUT
 
-cp "$ASSEMBLIES_DIR"/*.dll "$ASSEMBLIES_DIR"/*.exe "$APP_CONTENTS_DIR/MonoBundle/"
+rm -f "$APP_DIR/Contents/MonoBundle/"*.dll
+rm -f "$APP_DIR/Contents/MonoBundle/"*.exe
+cp "$ASSEMBLIES_DIR"/*.dll "$ASSEMBLIES_DIR"/*.exe "$APP_DIR/Contents/MonoBundle/"
+cp "/Users/fak/Projects/xamarin-macios/src/build/ios/native-64"/Xamarin.iOS.dll "$APP_DIR/Contents/MonoBundle/"
