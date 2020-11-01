@@ -26,7 +26,7 @@ void xamarin_setup_impl ()
 	mono_dllmap_insert (NULL, "System.Net.Security.Native", NULL, "__Internal", NULL);
 
 	xamarin_init_mono_debug = FALSE;
-	xamarin_executable_name = "Hello.iOS.exe";
+	xamarin_executable_name = APP_EXECUTABLE_NAME;
 	mono_use_llvm = FALSE;
 	xamarin_log_level = 8;
 	// mono_trace_set_level (0xFF);

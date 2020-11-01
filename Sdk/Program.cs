@@ -15,9 +15,16 @@ namespace MacCatSdk
                 return 1;
             }
 
+			try {
+                await (new BuildApp (projDir)).RunAsync ();
+                return 0;
 
-            await (new BuildApp (projDir)).RunAsync ();
-            return 0;
+			}
+			catch (Exception ex) {
+                Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine (ex.Message);
+                return 2;
+			}
         }
     }
 }
