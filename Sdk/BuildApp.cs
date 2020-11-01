@@ -41,6 +41,10 @@ namespace MacCatSdk
 		{
 			await CompileBinaryAsync ();
 			CopyAssemblies ();
+			AddInfoPList ();
+			AddPkgInfo ();
+			AddResources ();
+
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.WriteLine ($"Built {outputAppDir}");
 		}
@@ -105,6 +109,39 @@ namespace MacCatSdk
 			if (p.ExitCode != 0)
 				throw new Exception ("Failed to execute " + fileName);
 			return sb.ToString ();
+		}
+
+		void AddInfoPList ()
+		{
+			var src = Path.Combine (inputAppDir, "Info.plist");
+			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
+			File.Copy (src, dest, overwrite: true);
+		}
+
+		void AddPkgInfo ()
+		{
+			var src = Path.Combine (inputAppDir, "PkgInfo");
+			var dest = Path.Combine (outputAppDir, "Contents", "PkgInfo");
+			File.Copy (src, dest, overwrite: true);
+		}
+
+		void AddResources ()
+		{
+			var srcFiles =
+				from f in Directory.GetFiles (inputAppDir)
+				let e = Path.GetExtension (f).ToLowerInvariant ()
+				where e != ".arm64"
+				where e != ".dll"
+				where e != ".exe"
+				where e != ".mobileprovision"
+				select f;
+			Directory.CreateDirectory (Path.Combine (outputAppDir, "Contents", "Resources"));
+			foreach (var src in srcFiles) {
+				var name = Path.GetFileName (src);
+				var dest = Path.Combine (outputAppDir, "Contents", "Resources", name);
+
+				File.Copy (src, dest, overwrite: true);
+			}
 		}
 	}
 }
