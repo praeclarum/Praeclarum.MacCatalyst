@@ -16,6 +16,8 @@ namespace MacCatSdk
 		readonly string projDir;
 		readonly string binDir;
 		readonly string objDir;
+		private readonly string configuration;
+		private readonly string device;
 		readonly string executableAsmName;
 
 		readonly string APPNAME;
@@ -27,7 +29,10 @@ namespace MacCatSdk
 			this.binDir = Path.Combine (projDir, "bin");
 			this.objDir = Path.Combine (projDir, "obj");
 
-			inputAppDir = Directory.GetDirectories (Path.Combine (binDir, "iPhone", "Release"), "*.app").FirstOrDefault () ?? "";
+			this.configuration = "Release";
+			this.device = "iPhone";
+
+			inputAppDir = Directory.GetDirectories (Path.Combine (binDir, device, configuration), "*.app").FirstOrDefault () ?? "";
 			if (string.IsNullOrEmpty (inputAppDir))
 				throw new Exception ("Failed to find build app");
 
@@ -35,7 +40,7 @@ namespace MacCatSdk
 
 			executableAsmName = APPNAME + ".exe";
 
-			outputAppDir = Path.Combine (binDir, "MacCat", "Release", APPNAME + ".app");
+			outputAppDir = Path.Combine (binDir, "MacCat", configuration, APPNAME + ".app");
 			Directory.CreateDirectory (outputAppDir);
 		}
 
@@ -65,9 +70,10 @@ namespace MacCatSdk
 			string CFLAGS3 = $"-fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot {MACSDK}";
 			string DEFINES = "-D_THREAD_SAFE";
 			// FRAMEWORKS="-framework AppKit -framework Foundation -framework Security -framework Carbon -framework GSS";
-			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework UIKit";
+			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework UIKit -framework GSS";
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
-			string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
+			//string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
+			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
 			string OUT = $"{outputAppDir}/Contents/MacOS/{APPNAME}";
 			Directory.CreateDirectory (Path.GetDirectoryName (OUT));
 			string INCLUDES = $"-I{MONOMACCATDIR}/include/mono-2.0 -I{XAMMACCATDIR}/include";
@@ -80,6 +86,16 @@ namespace MacCatSdk
 			//System.Console.WriteLine(clangArgs);
 			var r = await ExecAsync (CLANG, clangArgs);
 			//System.Console.WriteLine(r);
+		}
+
+		string[] GetNativeEntryPoints ()
+		{
+			var path = Path.Combine (objDir, device, configuration, "mtouch-cache", "entry-points.txt");
+			var lines = File.ReadAllLines (path);
+			return (from l in lines
+					let s = l.Split ('=')
+					where s.Length == 2 && s[0] == "Function"
+					select s[1]).ToArray ();
 		}
 
 		void CopyAssemblies ()
