@@ -8,15 +8,15 @@ namespace MacCatSdk
     {
         static async Task<int> Main(string[] args)
         {
-            var projDir = args.Length > 0 ? args[0] : "";
-            if (string.IsNullOrEmpty (projDir) || !Directory.Exists (projDir)) {
+            var projFile = args.Length > 0 ? args[0] : "";
+            if (string.IsNullOrEmpty (projFile) || !File.Exists (projFile)) {
                 Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine ($"Usage: maccat project-directory");
                 return 1;
             }
 
 			try {
-                await (new BuildApp (projDir)).RunAsync ();
+                await (new BuildApp (projFile)).RunAsync ();
                 return 0;
 
 			}

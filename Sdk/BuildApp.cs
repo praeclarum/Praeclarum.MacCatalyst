@@ -12,6 +12,7 @@ namespace MacCatSdk
 		public string XamarinMacCatDirectory { get; set; } = Path.Combine (".", "xamarin-maccat");
 		readonly string inputAppDir;
 		readonly string outputAppDir;
+		readonly string projFile;
 		readonly string projDir;
 		readonly string binDir;
 		readonly string objDir;
@@ -19,9 +20,10 @@ namespace MacCatSdk
 
 		readonly string APPNAME;
 
-		public BuildApp (string projDir)
+		public BuildApp (string projFile)
 		{
-			this.projDir = projDir;
+			this.projFile = Path.GetFullPath (projFile);
+			this.projDir = Path.GetDirectoryName (this.projFile) ?? throw new Exception ("Bad project file path");
 			this.binDir = Path.Combine (projDir, "bin");
 			this.objDir = Path.Combine (projDir, "obj");
 
@@ -65,11 +67,12 @@ namespace MacCatSdk
 			// FRAMEWORKS="-framework AppKit -framework Foundation -framework Security -framework Carbon -framework GSS";
 			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework UIKit";
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
-			string US = "-u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
+			string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
 			string OUT = $"{outputAppDir}/Contents/MacOS/{APPNAME}";
 			Directory.CreateDirectory (Path.GetDirectoryName (OUT));
 			string INCLUDES = $"-I{MONOMACCATDIR}/include/mono-2.0 -I{XAMMACCATDIR}/include";
 			string LINKS = $"{MONOMACCATDIR}/lib/libmonosgen-2.0.a {MONOMACCATDIR}/lib/libmono-native.a";
+
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {OUT} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
@@ -125,23 +128,54 @@ namespace MacCatSdk
 			File.Copy (src, dest, overwrite: true);
 		}
 
-		void AddResources ()
+		/// <summary>
+		/// https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories
+		/// </summary>
+		static void CopyResourcesRecur (string sourceDirName, string destDirName)
 		{
+			// Get the subdirectories for the specified directory.
+			DirectoryInfo dir = new DirectoryInfo (sourceDirName);
+
+			if (!dir.Exists) {
+				throw new DirectoryNotFoundException (
+					"Source directory does not exist or could not be found: "
+					+ sourceDirName);
+			}
+
+			DirectoryInfo[] dirs = dir.GetDirectories ();
+
+			// If the destination directory doesn't exist, create it.       
+			Directory.CreateDirectory (destDirName);
+
+			// Get the files in the directory and copy them to the new location.
+			FileInfo[] files = dir.GetFiles ();
 			var srcFiles =
-				from f in Directory.GetFiles (inputAppDir)
-				let e = Path.GetExtension (f).ToLowerInvariant ()
+				from f in files
+				let e = f.Extension.ToLowerInvariant ()
 				where e != ".arm64"
 				where e != ".dll"
 				where e != ".exe"
 				where e != ".mobileprovision"
 				select f;
-			Directory.CreateDirectory (Path.Combine (outputAppDir, "Contents", "Resources"));
-			foreach (var src in srcFiles) {
-				var name = Path.GetFileName (src);
-				var dest = Path.Combine (outputAppDir, "Contents", "Resources", name);
-
-				File.Copy (src, dest, overwrite: true);
+			foreach (FileInfo file in srcFiles) {
+				string tempPath = Path.Combine (destDirName, file.Name);
+				file.CopyTo (tempPath, overwrite: true);
 			}
+
+			// If copying subdirectories, copy them and their contents to new location.
+			var srcDirs =
+				from f in dirs
+				where f.Name != "_CodeSignature"
+				select f;
+			foreach (DirectoryInfo subdir in srcDirs) {
+				string tempPath = Path.Combine (destDirName, subdir.Name);
+				CopyResourcesRecur (subdir.FullName, tempPath);
+			}
+		}
+
+		void AddResources ()
+		{
+			CopyResourcesRecur (inputAppDir, Path.Combine (outputAppDir, "Contents", "Resources"));
 		}
 	}
 }
