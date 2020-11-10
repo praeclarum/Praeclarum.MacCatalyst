@@ -25,7 +25,7 @@ cd maccat-sdk-YYYYmmdd
 ./maccat.sh /Path/To/Your/App.csproj
 ```
 
-The tool will output a new `App.app` in the `$(ProjectDirectory)/bin/MacCat/Release` directory. 
+The tool will output a new `App.app` in the `$(ProjectDirectory)/bin/MacCatalyst/Release` directory. 
 
 If your app crashes when running, it can be useful to see its output from the command line.
 You can do this by running it's executable directly:
@@ -43,6 +43,10 @@ You can probably do it manually at the command line, but I haven't figured the i
 
 
 ## Known Issues
+
+* **AOT is not supported** Your code will run using the mono jit.
+
+* **Static registrar is not supported** Startup times are a little slow because the ObjC bridge has to be dynamically created.
 
 * **Native is code not supported** The native binaries for Catalyst apps do not exactly match iOS or Mac binaries. This means libraries that ship with native code do not work.
 

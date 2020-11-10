@@ -17,7 +17,7 @@ namespace MacCatSdk
 		readonly string binDir;
 		readonly string objDir;
 		private readonly string configuration;
-		private readonly string device;
+		private readonly string fromPlatform;
 		readonly string executableAsmName;
 
 		readonly string APPNAME;
@@ -30,23 +30,25 @@ namespace MacCatSdk
 			this.objDir = Path.Combine (projDir, "obj");
 
 			this.configuration = "Release";
-			this.device = "iPhone";
+			this.fromPlatform = "iPhone";
 
-			inputAppDir = Directory.GetDirectories (Path.Combine (binDir, device, configuration), "*.app").FirstOrDefault () ?? "";
+			inputAppDir = Directory.GetDirectories (Path.Combine (binDir, fromPlatform, configuration), "*.app").FirstOrDefault () ?? "";
 			if (string.IsNullOrEmpty (inputAppDir))
-				throw new Exception ("Failed to find build app");
+				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
 
 			APPNAME = Path.GetFileNameWithoutExtension (inputAppDir);
 
 			executableAsmName = APPNAME + ".exe";
 
-			outputAppDir = Path.Combine (binDir, "MacCat", configuration, APPNAME + ".app");
+			outputAppDir = Path.Combine (binDir, "MacCatalyst", configuration, APPNAME + ".app");
 			Directory.CreateDirectory (outputAppDir);
 		}
 
 		public async Task RunAsync ()
 		{
+			//await BuildProjectAsync ();
 			await CompileBinaryAsync ();
+			Console.WriteLine ($"Building app...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
 			AddPkgInfo ();
@@ -56,8 +58,16 @@ namespace MacCatSdk
 			Console.WriteLine ($"Built {outputAppDir}");
 		}
 
+		async Task BuildProjectAsync ()
+		{
+			Console.WriteLine ($"Building \"{projFile}\"...");
+			await ExecAsync ("msbuild", $"/p:Configuration={configuration} /p:Platform={fromPlatform} \"{projFile}\"", showOutput: true);
+		}
+
 		async Task CompileBinaryAsync ()
 		{
+			Console.WriteLine ($"Compiling binary...");
+
 			//
 			// ENVIRONMENT VARIABLES
 			string CLANG = await ExecAsync ("xcrun", "-f clang");
@@ -90,7 +100,7 @@ namespace MacCatSdk
 
 		string[] GetNativeEntryPoints ()
 		{
-			var path = Path.Combine (objDir, device, configuration, "mtouch-cache", "entry-points.txt");
+			var path = Path.Combine (objDir, fromPlatform, configuration, "mtouch-cache", "entry-points.txt");
 			var lines = File.ReadAllLines (path);
 			return (from l in lines
 					let s = l.Split ('=')
@@ -100,8 +110,8 @@ namespace MacCatSdk
 
 		void CopyAssemblies ()
 		{
-			string ASSEMBLIES_DIR = $"{objDir}/iPhone/Release/mtouch-cache/1-Link";
-			string LINKED_ASSEMBLIES_DIR = $"{objDir}/iPhone/Release/mtouch-cache/3-Build";
+			string ASSEMBLIES_DIR = $"{objDir}/{fromPlatform}/{configuration}/mtouch-cache/1-Link";
+			string LINKED_ASSEMBLIES_DIR = $"{objDir}/{fromPlatform}/{configuration}/mtouch-cache/3-Build";
 			var asmsOutDir = Path.Combine (outputAppDir, "Contents", "MonoBundle");
 			Directory.CreateDirectory (asmsOutDir);
 			void CopyAsm (string a) => File.Copy (a, Path.Combine (asmsOutDir, Path.GetFileName (a)), overwrite: true);
@@ -114,7 +124,7 @@ namespace MacCatSdk
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
-		async Task<string> ExecAsync (string fileName, string arguments)
+		async Task<string> ExecAsync (string fileName, string arguments, bool showOutput = false)
 		{
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
 			si.RedirectStandardOutput = true;
@@ -123,10 +133,16 @@ namespace MacCatSdk
 			var sb = new StringBuilder ();
 			while ((line = await p.StandardOutput.ReadLineAsync ()) != null) {
 				sb.Append (line);
+				if (showOutput) {
+					Console.ForegroundColor = line.Contains("error", StringComparison.InvariantCultureIgnoreCase) ? ConsoleColor.Red : ConsoleColor.DarkGray;
+					Console.WriteLine (line);
+				}
 			}
 			p.WaitForExit ();
 			if (p.ExitCode != 0)
 				throw new Exception ("Failed to execute " + fileName);
+			if (showOutput)
+				Console.ResetColor ();
 			return sb.ToString ();
 		}
 
