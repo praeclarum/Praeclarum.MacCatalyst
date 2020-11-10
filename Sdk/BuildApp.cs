@@ -48,7 +48,7 @@ namespace MacCatSdk
 		{
 			await CompileBinaryAsync ();
 			CopyAssemblies ();
-			AddInfoPList ();
+			await AddInfoPListAsync ();
 			AddPkgInfo ();
 			AddResources ();
 
@@ -130,11 +130,24 @@ namespace MacCatSdk
 			return sb.ToString ();
 		}
 
-		void AddInfoPList ()
+		async Task AddInfoPListAsync ()
 		{
 			var src = Path.Combine (inputAppDir, "Info.plist");
 			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
 			File.Copy (src, dest, overwrite: true);
+			await PlistAsync ($"Set :DTPlatformName macosx");
+			await PlistAsync ($"Set :DTPlatformVersion 10.15.0");
+			await PlistAsync ($"Set :DTSDKName macosx10.15");
+			await PlistAsync ($"Set :CFBundleSupportedPlatforms:0 MacOSX");
+			await PlistAsync ($"Add :LSMinimumSystemVersion string 10.15.0");
+			await PlistAsync ($"Delete :MinimumOSVersion");
+			await PlistAsync ($"Delete :LSRequiresIPhoneOS");
+		}
+
+		async Task PlistAsync (string command)
+		{
+			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
+			await ExecAsync ("/usr/libexec/PlistBuddy", $"-c \"{command}\" \"{dest}\"");
 		}
 
 		void AddPkgInfo ()
