@@ -3,7 +3,9 @@
 /Sdk/Hi.app
 /Sdk/Test.app
 
-
+/release_out
+/maccat-sdk*
+/Releases
 
 # User-specific files
 xcuserdata
