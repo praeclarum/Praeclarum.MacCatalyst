@@ -69,7 +69,8 @@ namespace MacCatSdk
 		public async Task RunAsync ()
 		{
 			//await BuildProjectAsync ();
-			await CompileBinaryAsync ();
+			if (!await CompileBinaryAsync ())
+				return;
 			Console.WriteLine ($"Building app...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
@@ -86,13 +87,23 @@ namespace MacCatSdk
 			await ExecAsync ("msbuild", $"/p:Configuration={configuration} /p:Platform={fromPlatform} \"{projFile}\"", showOutput: true);
 		}
 
-		async Task CompileBinaryAsync ()
+		async Task<bool> CompileBinaryAsync ()
 		{
 			Console.WriteLine ($"Compiling binary...");
 
 			//
 			// ENVIRONMENT VARIABLES
-			string CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false);
+			string CLANG;
+			try {
+				CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false, showError: false);
+			}
+			catch {
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine ($"Couldn't run Xcode tools. Please run:");
+				Console.ResetColor ();
+				Console.WriteLine ("sudo xcode-select --switch /Applications/Xcode.app");
+				return false;
+			}
 			string XAMMACCATDIR = Path.Combine (XamarinMacCatDirectory, "Xamarin.macOSCatalyst.sdk");
 			string MONOMACCATDIR = MonoMacCatDirectory;
 			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path", showOutput: false);
@@ -118,6 +129,7 @@ namespace MacCatSdk
 			//System.Console.WriteLine(clangArgs);
 			var r = await ExecAsync (CLANG, clangArgs);
 			//System.Console.WriteLine(r);
+			return true;
 		}
 
 		static readonly HashSet<string> ignoreEntryPoints = new HashSet<string> {
