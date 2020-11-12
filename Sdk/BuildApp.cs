@@ -15,24 +15,37 @@ namespace MacCatSdk
 		readonly string projFile;
 		readonly string projDir;
 		readonly string binDir;
+		readonly string cbinDir;
 		readonly string objDir;
+		readonly string cobjDir;
 		private readonly string configuration;
 		private readonly string fromPlatform;
 		readonly string executableAsmName;
 
 		readonly string APPNAME;
 
-		public BuildApp (string projFile)
+		public BuildApp (string projFile, string configuration, string platform)
 		{
 			this.projFile = Path.GetFullPath (projFile);
 			this.projDir = Path.GetDirectoryName (this.projFile) ?? throw new Exception ("Bad project file path");
 			this.binDir = Path.Combine (projDir, "bin");
 			this.objDir = Path.Combine (projDir, "obj");
 
-			this.configuration = "Release";
-			this.fromPlatform = "iPhone";
+			this.configuration = configuration;
+			this.fromPlatform = platform;
 
-			inputAppDir = Directory.GetDirectories (Path.Combine (binDir, fromPlatform, configuration), "*.app").FirstOrDefault () ?? "";
+			cbinDir = Path.Combine (binDir, fromPlatform, configuration);
+			cobjDir = Path.Combine (objDir, fromPlatform, configuration);
+			if (Directory.Exists (Path.Combine (cbinDir, "device-builds"))) {
+				var dbinDir =
+					Directory.GetDirectories (Path.Combine (cbinDir, "device-builds"))
+					.FirstOrDefault (x => Directory.GetDirectories (x, "*.app").Length > 0);
+				if (!string.IsNullOrEmpty (dbinDir)) {
+					cbinDir = dbinDir;
+					cobjDir = Path.Combine (cobjDir, "device-builds", Path.GetFileName (dbinDir));
+				}
+			}
+			inputAppDir = Directory.GetDirectories (cbinDir, "*.app").FirstOrDefault () ?? "";
 			if (string.IsNullOrEmpty (inputAppDir))
 				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
 
@@ -100,7 +113,7 @@ namespace MacCatSdk
 
 		string[] GetNativeEntryPoints ()
 		{
-			var path = Path.Combine (objDir, fromPlatform, configuration, "mtouch-cache", "entry-points.txt");
+			var path = Path.Combine (cobjDir, "mtouch-cache", "entry-points.txt");
 			var lines = File.ReadAllLines (path);
 			return (from l in lines
 					let s = l.Split ('=')
@@ -110,8 +123,8 @@ namespace MacCatSdk
 
 		void CopyAssemblies ()
 		{
-			string ASSEMBLIES_DIR = $"{objDir}/{fromPlatform}/{configuration}/mtouch-cache/1-Link";
-			string LINKED_ASSEMBLIES_DIR = $"{objDir}/{fromPlatform}/{configuration}/mtouch-cache/3-Build";
+			string ASSEMBLIES_DIR = $"{cobjDir}/mtouch-cache/1-Link";
+			string LINKED_ASSEMBLIES_DIR = $"{cobjDir}/mtouch-cache/3-Build";
 			var asmsOutDir = Path.Combine (outputAppDir, "Contents", "MonoBundle");
 			Directory.CreateDirectory (asmsOutDir);
 			void CopyAsm (string a) => File.Copy (a, Path.Combine (asmsOutDir, Path.GetFileName (a)), overwrite: true);

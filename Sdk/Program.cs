@@ -9,18 +9,44 @@ namespace MacCatSdk
 	{
 		static async Task<int> Main (string[] args)
 		{
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.WriteLine ("Xamarin.iOS to Mac Catalyst Converter BETA");
-			Console.ResetColor ();
-
-			var projFile = args.FirstOrDefault (x => x.EndsWith ("proj", StringComparison.InvariantCultureIgnoreCase));
-			if (string.IsNullOrEmpty (projFile)) {
+			var projFile = "";
+			var wantsHelp = false;
+			var config = "Release";
+			var platform = "iPhone";
+			var argc = args.Length;
+			for (var i = 0; i < argc; i++) {
+				var a = args[i];
+				if (a.EndsWith ("proj", StringComparison.InvariantCultureIgnoreCase)) {
+					projFile = a;
+				}
+				else if (a == "-h" || a == "--help") {
+					wantsHelp = true;
+				}
+				else if (a == "-c" || a == "--configuration" && i + 1 < argc) {
+					config = args[i + 1];
+					i++;
+				}
+				else if (a == "-p" || a == "--platform" && i + 1 < argc) {
+					platform = args[i + 1];
+					i++;
+				}
+			}
+			if (wantsHelp || string.IsNullOrEmpty (projFile)) {
 				Console.ResetColor ();
 				Console.WriteLine ($"Usage: maccat project-file");
 				Console.WriteLine ($"");
 				Console.WriteLine ($"Example: maccat /Users/me/Projects/MyApp/MyApp.csproj");
-				return 1;
+				Console.WriteLine ($"");
+				Console.WriteLine ($"Options:");
+				Console.WriteLine ($"  -c, --configuration <Release|Debug>");
+				Console.WriteLine ($"  -p, --platform <iPhone|iPhoneSimulator>");
+				return wantsHelp ? 0 : 1;
 			}
+
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine ("Xamarin.iOS to Mac Catalyst Converter BETA");
+			Console.ResetColor ();
+
 			if (!File.Exists (projFile)) {
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine ($"Could not locate {projFile}");
@@ -28,7 +54,7 @@ namespace MacCatSdk
 			}
 
 			try {
-				await (new BuildApp (projFile)).RunAsync ();
+				await (new BuildApp (projFile, config, platform)).RunAsync ();
 				return 0;
 
 			}
