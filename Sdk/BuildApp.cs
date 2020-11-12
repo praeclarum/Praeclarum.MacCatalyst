@@ -84,10 +84,10 @@ namespace MacCatSdk
 
 			//
 			// ENVIRONMENT VARIABLES
-			string CLANG = await ExecAsync ("xcrun", "-f clang");
+			string CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false);
 			string XAMMACCATDIR = Path.Combine (XamarinMacCatDirectory, "Xamarin.macOSCatalyst.sdk");
 			string MONOMACCATDIR = MonoMacCatDirectory;
-			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path");
+			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path", showOutput: false);
 			// COMPUTED VARIABLED
 			string CFLAGS = "-target x86_64-apple-ios13.0-macabi -Wno-unguarded-availability-new -std=c++14 -ObjC";
 			string CFLAGS2 = "-lz -liconv -lc++ -x objective-c++ -stdlib=libc++";
@@ -144,7 +144,7 @@ namespace MacCatSdk
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
-		async Task<string> ExecAsync (string fileName, string arguments, bool showOutput = false)
+		async Task<string> ExecAsync (string fileName, string arguments, bool showOutput = true, bool showError = true)
 		{
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
 			si.RedirectStandardOutput = true;
@@ -165,7 +165,7 @@ namespace MacCatSdk
 			var readErrorTask = Task.Run (async () => {
 				while ((line = await p.StandardError.ReadLineAsync ()) != null) {
 					sbe.Append (line);
-					if (showOutput) {
+					if (showError) {
 						Console.ForegroundColor = ConsoleColor.Red;
 						Console.WriteLine (line);
 					}
@@ -196,16 +196,16 @@ namespace MacCatSdk
 			await PlistAsync ($"Delete :LSRequiresIPhoneOS");
 		}
 
-		async Task PlistAsync (string command)
+		async Task PlistAsync (string command, bool showError = true)
 		{
 			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
-			await ExecAsync ("/usr/libexec/PlistBuddy", $"-c \"{command}\" \"{dest}\"", showOutput: false);
+			await ExecAsync ("/usr/libexec/PlistBuddy", $"-c \"{command}\" \"{dest}\"", showError: showError);
 		}
 
 		async Task PlistAsync (string command, string alt)
 		{
 			try {
-				await PlistAsync (command);
+				await PlistAsync (command, showError: false);
 			}
 			catch {
 				await PlistAsync (alt);

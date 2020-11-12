@@ -15,6 +15,18 @@ Thank you for supporting me, and let me know if it works for you!
 * .NET Core 3.1
 * Xamarin.iOS
 
+Verify that you have a Xcode's command line tools installed and the appropriate Xcode
+selected using:
+
+```bash
+--print-path
+```
+
+If that fails or is incorrect, you can set your version with:
+
+```bash
+sudo xcode-select --switch /Applications/Xcode.app
+```
 
 ## Usage
 
@@ -22,6 +34,7 @@ To convert your iOS app to a Mac Catalyst app, run the `maccat` tool (script or 
 
 ```bash
 cd maccat-sdk-YYYYmmdd
+
 ./maccat.sh /Path/To/Your/App.csproj
 ```
 
