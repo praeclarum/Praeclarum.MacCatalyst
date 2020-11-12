@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -111,6 +112,10 @@ namespace MacCatSdk
 			//System.Console.WriteLine(r);
 		}
 
+		static readonly HashSet<string> ignoreEntryPoints = new HashSet<string> {
+			"mono_profiler_init_log",
+		};
+
 		string[] GetNativeEntryPoints ()
 		{
 			var path = Path.Combine (cobjDir, "mtouch-cache", "entry-points.txt");
@@ -118,6 +123,8 @@ namespace MacCatSdk
 			return (from l in lines
 					let s = l.Split ('=')
 					where s.Length == 2 && s[0] == "Function"
+					let e = s[1]
+					where !ignoreEntryPoints.Contains (e)
 					select s[1]).ToArray ();
 		}
 
@@ -141,17 +148,32 @@ namespace MacCatSdk
 		{
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
 			si.RedirectStandardOutput = true;
+			si.RedirectStandardError = true;
 			var p = System.Diagnostics.Process.Start (si);
 			string? line;
 			var sb = new StringBuilder ();
-			while ((line = await p.StandardOutput.ReadLineAsync ()) != null) {
-				sb.Append (line);
-				if (showOutput) {
-					Console.ForegroundColor = line.Contains("error", StringComparison.InvariantCultureIgnoreCase) ? ConsoleColor.Red : ConsoleColor.DarkGray;
-					Console.WriteLine (line);
+			var sbe = new StringBuilder ();
+			var readOutTask = Task.Run (async () => {
+				while ((line = await p.StandardOutput.ReadLineAsync ()) != null) {
+					sb.Append (line);
+					if (showOutput) {
+						Console.ForegroundColor = line.Contains ("error", StringComparison.InvariantCultureIgnoreCase) ? ConsoleColor.Red : ConsoleColor.DarkGray;
+						Console.WriteLine (line);
+					}
 				}
-			}
+			});
+			var readErrorTask = Task.Run (async () => {
+				while ((line = await p.StandardError.ReadLineAsync ()) != null) {
+					sbe.Append (line);
+					if (showOutput) {
+						Console.ForegroundColor = ConsoleColor.Red;
+						Console.WriteLine (line);
+					}
+				}
+			});
 			p.WaitForExit ();
+			await readOutTask;
+			await readErrorTask;
 			if (p.ExitCode != 0)
 				throw new Exception ("Failed to execute " + fileName);
 			if (showOutput)
@@ -164,8 +186,9 @@ namespace MacCatSdk
 			var src = Path.Combine (inputAppDir, "Info.plist");
 			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
 			File.Copy (src, dest, overwrite: true);
+			var macOSVersion = "10.15.0";
 			await PlistAsync ($"Set :DTPlatformName macosx");
-			await PlistAsync ($"Set :DTPlatformVersion 10.15.0");
+			await PlistAsync ($"Set :DTPlatformVersion {macOSVersion}", $"Add :DTPlatformVersion string {macOSVersion}");
 			await PlistAsync ($"Set :DTSDKName macosx10.15");
 			await PlistAsync ($"Set :CFBundleSupportedPlatforms:0 MacOSX");
 			await PlistAsync ($"Add :LSMinimumSystemVersion string 10.15.0");
@@ -176,7 +199,17 @@ namespace MacCatSdk
 		async Task PlistAsync (string command)
 		{
 			var dest = Path.Combine (outputAppDir, "Contents", "Info.plist");
-			await ExecAsync ("/usr/libexec/PlistBuddy", $"-c \"{command}\" \"{dest}\"");
+			await ExecAsync ("/usr/libexec/PlistBuddy", $"-c \"{command}\" \"{dest}\"", showOutput: false);
+		}
+
+		async Task PlistAsync (string command, string alt)
+		{
+			try {
+				await PlistAsync (command);
+			}
+			catch {
+				await PlistAsync (alt);
+			}
 		}
 
 		void AddPkgInfo ()
