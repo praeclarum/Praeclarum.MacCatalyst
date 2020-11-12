@@ -25,6 +25,8 @@ namespace MacCatSdk
 
 		readonly string APPNAME;
 
+		readonly string executableName;
+
 		public BuildApp (string projFile, string configuration, string platform)
 		{
 			this.projFile = Path.GetFullPath (projFile);
@@ -35,32 +37,39 @@ namespace MacCatSdk
 			this.configuration = configuration;
 			this.fromPlatform = platform;
 
-			cbinDir = Path.Combine (binDir, fromPlatform, configuration);
-			cobjDir = Path.Combine (objDir, fromPlatform, configuration);
-			if (Directory.Exists (Path.Combine (cbinDir, "device-builds"))) {
-				var dbins =
-					from d in Directory.GetDirectories (Path.Combine (cbinDir, "device-builds"))
-					let ads = Directory.GetDirectories (d, "*.app")
-					where ads.Length > 0
-					let ad = ads[0]
-					let exes = Directory.GetFiles (ad, "*.exe")
-					where exes.Length > 0
-					let modTime = exes.Max (x => new FileInfo (x).LastWriteTimeUtc)
-					orderby modTime descending
-					select d;
-				var dbinDir = dbins.FirstOrDefault ();
-				if (!string.IsNullOrEmpty (dbinDir)) {
-					cbinDir = dbinDir;
-					cobjDir = Path.Combine (cobjDir, "device-builds", Path.GetFileName (dbinDir));
+			var xbinDir = Path.Combine (binDir, fromPlatform, configuration);
+
+			var appDirs = new List<(string Path, DateTime Time)> ();
+			void FindAppDirs (string dir)
+			{
+				if (Path.GetExtension (dir).ToLowerInvariant () == ".app") {
+					var times =
+						(from f in Directory.GetFiles (dir, "*.exe")
+						let t = new FileInfo(f).LastWriteTimeUtc
+						orderby t descending
+						select t).ToList ();
+					if (times.Count > 0 && File.Exists (Path.Combine (dir, "Info.plist"))) {
+						appDirs.Add ((dir, times[0]));
+					}
+				}
+				else {
+					foreach (var c in Directory.GetDirectories (dir)) {
+						FindAppDirs (c);
+					}
 				}
 			}
-			inputAppDir = Directory.GetDirectories (cbinDir, "*.app").FirstOrDefault () ?? "";
+			FindAppDirs (xbinDir);
+			inputAppDir = (from x in appDirs orderby x.Time descending select x.Path).FirstOrDefault ();
 			if (string.IsNullOrEmpty (inputAppDir))
 				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
 
+			cbinDir = Path.GetDirectoryName (inputAppDir) ?? "";
+			cobjDir = cbinDir.Replace (this.binDir, this.objDir);
+
 			APPNAME = Path.GetFileNameWithoutExtension (inputAppDir);
 
-			executableAsmName = APPNAME + ".exe";
+			executableName = APPNAME;
+			executableAsmName = executableName + ".exe";
 
 			outputAppDir = Path.Combine (binDir, "MacCatalyst", configuration, APPNAME + ".app");
 			Directory.CreateDirectory (outputAppDir);
@@ -69,9 +78,10 @@ namespace MacCatSdk
 		public async Task RunAsync ()
 		{
 			//await BuildProjectAsync ();
+			await KillRunningApp ();
 			if (!await CompileBinaryAsync ())
 				return;
-			Console.WriteLine ($"Building app...");
+			Console.WriteLine ($"Building \"{APPNAME}.app\"...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
 			AddPkgInfo ();
@@ -79,6 +89,12 @@ namespace MacCatSdk
 
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.WriteLine ($"Built {outputAppDir}");
+		}
+
+		async Task KillRunningApp ()
+		{
+			Console.WriteLine ($"Killing \"{executableName}\"...");
+			await ExecAsync ("killall", executableName, showError: false, showOutput: false, throwOnError: false);
 		}
 
 		async Task BuildProjectAsync ()
@@ -89,7 +105,7 @@ namespace MacCatSdk
 
 		async Task<bool> CompileBinaryAsync ()
 		{
-			Console.WriteLine ($"Compiling binary...");
+			Console.WriteLine ($"Compiling native \"{executableName}\"...");
 
 			//
 			// ENVIRONMENT VARIABLES
@@ -117,7 +133,7 @@ namespace MacCatSdk
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
 			//string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
-			string OUT = $"{outputAppDir}/Contents/MacOS/{APPNAME}";
+			string OUT = $"{outputAppDir}/Contents/MacOS/{executableName}";
 			Directory.CreateDirectory (Path.GetDirectoryName (OUT));
 			string INCLUDES = $"-I{MONOMACCATDIR}/include/mono-2.0 -I{XAMMACCATDIR}/include";
 			string LINKS = $"{MONOMACCATDIR}/lib/libmonosgen-2.0.a {MONOMACCATDIR}/lib/libmono-native.a";
@@ -164,7 +180,7 @@ namespace MacCatSdk
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
-		async Task<string> ExecAsync (string fileName, string arguments, bool showOutput = true, bool showError = true)
+		async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true)
 		{
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
 			si.RedirectStandardOutput = true;
@@ -194,8 +210,8 @@ namespace MacCatSdk
 			p.WaitForExit ();
 			await readOutTask;
 			await readErrorTask;
-			if (p.ExitCode != 0)
-				throw new Exception ("Failed to execute " + fileName);
+			if (throwOnError && p.ExitCode != 0)
+				throw new Exception ($"{fileName} failed with code: {p.ExitCode}");
 			if (showOutput)
 				Console.ResetColor ();
 			return sb.ToString ();
