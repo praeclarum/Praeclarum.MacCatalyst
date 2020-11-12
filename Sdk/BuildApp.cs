@@ -38,9 +38,17 @@ namespace MacCatSdk
 			cbinDir = Path.Combine (binDir, fromPlatform, configuration);
 			cobjDir = Path.Combine (objDir, fromPlatform, configuration);
 			if (Directory.Exists (Path.Combine (cbinDir, "device-builds"))) {
-				var dbinDir =
-					Directory.GetDirectories (Path.Combine (cbinDir, "device-builds"))
-					.FirstOrDefault (x => Directory.GetDirectories (x, "*.app").Length > 0);
+				var dbins =
+					from d in Directory.GetDirectories (Path.Combine (cbinDir, "device-builds"))
+					let ads = Directory.GetDirectories (d, "*.app")
+					where ads.Length > 0
+					let ad = ads[0]
+					let exes = Directory.GetFiles (ad, "*.exe")
+					where exes.Length > 0
+					let modTime = exes.Max (x => new FileInfo (x).LastWriteTimeUtc)
+					orderby modTime descending
+					select d;
+				var dbinDir = dbins.FirstOrDefault ();
 				if (!string.IsNullOrEmpty (dbinDir)) {
 					cbinDir = dbinDir;
 					cobjDir = Path.Combine (cobjDir, "device-builds", Path.GetFileName (dbinDir));

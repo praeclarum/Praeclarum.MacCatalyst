@@ -19,7 +19,7 @@ Verify that you have a Xcode's command line tools installed and the appropriate 
 selected using:
 
 ```bash
---print-path
+xcode-select --print-path
 ```
 
 If that fails or is incorrect, you can set your version with:
@@ -51,7 +51,7 @@ You can specify to different configurations and platforms on the command line:
 ### Crash Details
 
 If your app crashes when running, it can be useful to see its output from the command line.
-You can do this by running it's executable directly:
+You can do this by running its executable directly:
 
 ```bash
 /App.app/Contents/MacOS/App
