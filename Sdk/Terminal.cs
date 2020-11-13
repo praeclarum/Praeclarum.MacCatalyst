@@ -7,6 +7,7 @@ namespace maccat
 	public static class Terminal
 	{
 		static string CLANG = "clang";
+		static string AR = "ar";
 
 		public static async Task FindToolPathsAsync ()
 		{
@@ -15,6 +16,7 @@ namespace maccat
 			//
 			try {
 				CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false, showError: false);
+				AR = await ExecAsync ("xcrun", "-f ar", showOutput: false, showError: false);
 			}
 			catch {
 				Console.ForegroundColor = ConsoleColor.Yellow;
@@ -23,18 +25,23 @@ namespace maccat
 				Console.WriteLine ("sudo xcode-select --switch /Applications/Xcode.app");
 			}
 		}
-		public static Task<string> ClangAsync (string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true)
-		{
-			return ExecAsync (CLANG, "-target x86_64-apple-ios13.0-macabi " + arguments,
-				throwOnError: throwOnError, showOutput: showOutput, showError: showError);
-		}
 
-		public static async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true)
+		public static Task<string> ArAsync (string arguments, bool throwOnError = true, bool showOutput = true, bool showError = false, string? cd = null) =>
+			ExecAsync (AR, arguments,
+				       throwOnError: throwOnError, showOutput: showOutput, showError: showError, cd: cd);
+
+		public static Task<string> ClangAsync (string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true, string? cd = null) =>
+			ExecAsync (CLANG, "-target x86_64-apple-ios13.0-macabi " + arguments,
+					   throwOnError: throwOnError, showOutput: showOutput, showError: showError, cd: cd);
+
+		public static async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true, string? cd = null)
 		{
 			//Console.WriteLine ("{0} {1}", fileName, arguments);
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
 			si.RedirectStandardOutput = true;
 			si.RedirectStandardError = true;
+			if (!string.IsNullOrEmpty (cd))
+				si.WorkingDirectory = cd;
 			var p = System.Diagnostics.Process.Start (si);
 			string? line;
 			var sb = new StringBuilder ();

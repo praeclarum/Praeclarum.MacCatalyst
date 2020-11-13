@@ -20,23 +20,44 @@ namespace maccat
 			this.outputAppDir = outputAppDir;
 		}
 
-		public async Task<string> ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
+		public Task<string> ModifyMachHeaderAsync (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
 		{
-			var bytes = File.ReadAllBytes (inPath);
+			return MarzFile (Path.GetFileName (inPath), inPath, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+		}
 
-			var dsyms = ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (bytes, bytes.Length, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+		async Task<string> MarzFile (string name, string inPath, bool injectMarzipanGlue, bool dryRun)
+		{
+			var fileBytes = File.ReadAllBytes (inPath);
 
-			if (!dryRun) {
-				var outPath = Path.GetTempFileName ();
-				File.WriteAllBytes (outPath, bytes);
-				await RenameDylibsAsync (outPath, dsyms);
-				return outPath;
+			var (index, length) = GetCpuHeader (fileBytes);
+
+			if (GetMachMagic (fileBytes) == MH.MAGIC_64) {
+				var dsyms = MarzMachO (name, fileBytes, index, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+
+				if (!dryRun) {
+					var outPath = Path.GetTempFileName ();
+					File.WriteAllBytes (outPath, fileBytes);
+					await RenameDylibsAsync (outPath, dsyms);
+					return outPath;
+				}
+				return inPath;
 			}
-			return inPath;
+
+			return await MarzArchive (name, fileBytes, index, length, dryRun: dryRun);
+		}
+
+		unsafe MH GetMachMagic (byte[] fileBytes)
+		{
+			fixed (byte* ptr = fileBytes) {
+				var machHeader = (mach_header_64*)ptr;
+				return machHeader->magic;
+			}
 		}
 
 		async Task RenameDylibsAsync (string outPath, string[] dsyms)
 		{
+			if (dsyms.Length == 0)
+				return;
 			var args = "";
 			foreach (var d in dsyms) {
 				args += " " + await NewLinkerPathForLoadedDylib (d);
@@ -86,109 +107,131 @@ namespace maccat
 			return outPath;
 		}
 
-		unsafe string[] ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte[] fileBytes, int sz, bool injectMarzipanGlue, bool dryRun)
+		unsafe (int Offset, int Size) GetCpuHeader (byte[] fileBytes)
 		{
-			fixed (byte* ptr = fileBytes) {
+			fixed (byte* fptr = fileBytes) {
+				var ptr = fptr;
+				var header_fat = (fat_header*)ptr;
+
 				//
 				// Read FAT if it's there
 				//
-				var header64offset = FindFatOffset (ptr);
+				if (header_fat->magic == FAT.CIGAM || header_fat->magic == FAT.MAGIC) {
+					int narchs = OSSwapBigToHostInt32 (header_fat->nfat_arch);
+					ptr += sizeof (fat_header);
 
-				//
-				// MachO
-				//
-				return MarzMachO (ptr + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
-			}
-		}
+					for (int i = 0; i < narchs; i++) {
+						var uarch = *(fat_arch*)ptr;
 
-		unsafe long FindFatOffset (byte* ptr)
-		{
-			var header_fat = (fat_header*)ptr;
+						var cpuType = (cpu_type_t)OSSwapBigToHostInt32 ((int)uarch.cputype);
 
-			if (header_fat->magic == FAT.CIGAM || header_fat->magic == FAT.MAGIC) {
-				int narchs = OSSwapBigToHostInt32 (header_fat->nfat_arch);
-				ptr += sizeof (fat_header);
-
-				for (int i = 0; i < narchs; i++) {
-					var uarch = *(fat_arch*)ptr;
-
-					var cpuType = (cpu_type_t)OSSwapBigToHostInt32 ((int)uarch.cputype);
-
-					if (cpuType == MachO.cpu_type_t.X86_64) {
-						//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
-						return OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
+						if (cpuType == MachO.cpu_type_t.X86_64) {
+							//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
+							return (OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64), OSSwapBigToHostInt32 (uarch.size));
+						}
+						//else if (cpuType == MachO.cpu_type_t.ARM64) {
+						//	//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
+						//	header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
+						//	break;
+						//}
+						else {
+							ptr += sizeof (fat_arch);
+						}
 					}
-					//else if (cpuType == MachO.cpu_type_t.ARM64) {
-					//	//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
-					//	header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
-					//	break;
-					//}
-					else {
-						ptr += sizeof (fat_arch);
-					}
+
+					throw new Exception ("ERROR: No X86_64 slice found.\n");
 				}
-
-				throw new Exception ("ERROR: No X86_64 slice found.\n");
 			}
 
 			// Not FAT
-			return 0;
+			return (0, fileBytes.Length);
 		}
 
-		unsafe string[] MarzMachO (byte* macho, bool injectMarzipanGlue, bool dryRun)
+		async Task<string> MarzArchive (string arName, byte[] arBuffer, int arIndex, int arLength, bool dryRun)
 		{
-			var ptr = macho;
+			var arPath = Path.Combine (Path.GetTempPath (), arName);
+			var arXPath = Path.Combine (Path.GetTempPath (), arName + ".out");
+			await File.WriteAllBytesAsync (arPath, arBuffer[arIndex..(arIndex + arLength)]);
+			Directory.CreateDirectory (arXPath);
+			Console.WriteLine ("Extracting to " + arXPath);
+			await ArAsync ($"-o -x \"{arPath}\"", cd: arXPath);
+
+			var newOPaths = new List<string> ();
+			foreach (var oPath in Directory.GetFiles (arXPath, "*.o")) {
+				var newOPath = await MarzFile (arName, oPath, injectMarzipanGlue: false, dryRun: dryRun);
+				//Console.WriteLine (newOPath);
+				newOPaths.Add (newOPath);
+			}
+
+			var arNewPath = Path.Combine (Path.GetTempPath (), Path.GetFileNameWithoutExtension (arName) + ".catalyst.a");
+
+			await ArAsync ($"-r \"{arNewPath}\" {string.Join (" ", newOPaths.Select (x => $"\"{x}\""))}");
+
+			return arNewPath;
+		}
+
+		readonly HashSet<string> ios11Errors = new HashSet<string> ();
+
+		unsafe string[] MarzMachO (string machoName, byte[] machoBuffer, int machoIndex, bool injectMarzipanGlue, bool dryRun)
+		{
 			var dylibs = new List<string> ();
 
-			var header64 = (mach_header_64*)ptr;
+			fixed (byte* macho = machoBuffer) {
+				var ptr = macho + machoIndex;
 
-			if (header64->magic != MH.MAGIC_64)
-				return Array.Empty<string> ();
+				var header64 = (mach_header_64*)ptr;
 
-			ptr += sizeof (mach_header_64);
-			var command = (load_command*)(ptr);
+				if (header64->magic != MH.MAGIC_64)
+					return Array.Empty<string> ();
 
-			for (int i = 0; i < header64->ncmds && header64->ncmds > 0; ++i) {
-				if (command->cmd == LC.LOAD_DYLIB) {
-					var ucmd = *(dylib_command*)ptr;
-					var offset = ucmd.dylib.name_offset;
-					var size = ucmd.cmdsize;
+				ptr += sizeof (mach_header_64);
+				var command = (load_command*)(ptr);
 
-					//printf("LC_LOAD_DYLIB %s\n", name);
-					if (Marshal.PtrToStringUTF8 (new IntPtr (ptr + offset)) is string name && !string.IsNullOrEmpty (name)) {
-						dylibs.Add (name);
+				for (int i = 0; i < header64->ncmds && header64->ncmds > 0; ++i) {
+					if (command->cmd == LC.LOAD_DYLIB) {
+						var ucmd = *(dylib_command*)ptr;
+						var offset = ucmd.dylib.name_offset;
+						var size = ucmd.cmdsize;
+
+						//printf("LC_LOAD_DYLIB %s\n", name);
+						if (Marshal.PtrToStringUTF8 (new IntPtr (ptr + offset)) is string name && !string.IsNullOrEmpty (name)) {
+							dylibs.Add (name);
+						}
 					}
+					else if (command->cmd == LC.VERSION_MIN_IPHONEOS) {
+						if (injectMarzipanGlue) {
+							Console.ForegroundColor = ConsoleColor.Yellow;
+							Console.WriteLine ($"Warning: {machoName} was built with an earlier iOS SDK.");
+							Console.ResetColor ();
+						}
+						else {
+							if (!ios11Errors.Contains (machoName)) {
+								ios11Errors.Add (machoName);
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.WriteLine ($"Error: {machoName} needs to be rebuilt with a minimum deployment target of iOS 12.");
+								Console.ResetColor ();
+							}
+						}
+
+						var ucmd = (version_min_command*)ptr;
+						if (!dryRun) {
+							ucmd->cmd = LC.VERSION_MIN_MACOSX;
+							ucmd->sdk = 10 << 16 | 14 << 8 | 0;
+							ucmd->version = 10 << 16 | 14 << 8 | 0;
+						}
+					}
+					else if (command->cmd == LC.BUILD_VERSION) {
+						var ucmd = (build_version_command*)ptr;
+						if (!dryRun) {
+							ucmd->platform = PLATFORM.MACCATALYST;
+							ucmd->minos = 12 << 16 | 0 << 8 | 0;
+							ucmd->sdk = 10 << 16 | 14 << 8 | 0;
+						}
+					}
+
+					ptr += command->cmdsize;
+					command = (load_command*)ptr;
 				}
-				else if (command->cmd == LC.VERSION_MIN_IPHONEOS) {
-					if (injectMarzipanGlue) {
-						Console.ForegroundColor = ConsoleColor.Yellow;
-						Console.WriteLine ("WARNING: This binary was built with an earlier iOS SDK.");
-						Console.ResetColor ();
-					}
-					else {
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine ("ERROR: This binary needs to be rebuilt with a minimum deployment target of iOS 12.");
-						Console.ResetColor ();
-					}
-
-					var ucmd = (version_min_command*)ptr;
-					if (!dryRun) {
-						ucmd->cmd = LC.VERSION_MIN_MACOSX;
-						ucmd->sdk = 10 << 16 | 14 << 8 | 0;
-						ucmd->version = 10 << 16 | 14 << 8 | 0;
-					}
-				}
-				else if (command->cmd == LC.BUILD_VERSION) {
-					var ucmd = (build_version_command*)ptr;
-					if (!dryRun) {
-						ucmd->platform = PLATFORM.MACCATALYST;
-						ucmd->minos = 12 << 16 | 0 << 8 | 0;
-						ucmd->sdk = 10 << 16 | 14 << 8 | 0;
-					}
-				}
-
-				ptr += command->cmdsize;
-				command = (load_command*)ptr;
 			}
 
 			return dylibs.ToArray ();

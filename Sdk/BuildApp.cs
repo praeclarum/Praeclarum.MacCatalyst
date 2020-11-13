@@ -91,9 +91,9 @@ namespace MacCatSdk
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
-			await MarzipanifyExecutableAsync ();
-			//if (!await CompileBinaryAsync ())
-			//	return;
+			//await MarzipanifyExecutableAsync ();
+			if (!await CompileBinaryAsync ())
+				return;
 			Console.WriteLine ($"Building \"{APPNAME}.app\"...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
@@ -124,8 +124,7 @@ namespace MacCatSdk
 		}
 
 		async Task<bool> CompileBinaryAsync ()
-		{
-			
+		{			
 			string XAMMACCATDIR = Path.Combine (XamarinMacCatDirectory, "Xamarin.macOSCatalyst.sdk");
 			string MONOMACCATDIR = MonoMacCatDirectory;
 			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path", showOutput: false);
@@ -142,7 +141,7 @@ namespace MacCatSdk
 			
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
 			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" ";
-			//LINKS += string.Join (" ", GetArchivedLibraries ().Select (x => $"\"{x}\""));
+			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Select (x => $"\"{x}\""));
 
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 
@@ -171,29 +170,23 @@ namespace MacCatSdk
 					select s[1]).ToArray ();
 		}
 
-		string[] GetArchivedLibraries ()
+		Task<string[]> GetArchivedLibrariesAsync ()
 		{
 			var inArchives = (from a in Directory.GetFiles (mtouchDir, "*.a")
 					select a).ToArray ();
-
-			var archives = inArchives.Select (MarzipanifyArchivedLibrary).ToArray ();
-
-			return archives;
+			return Task.WhenAll (inArchives.Select (MarzipanifyArchivedLibrary));
 		}
 
 		async Task<string> MarzipanifyAsync (string inPath)
 		{
 			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
-			return await marzipanify.ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inPath, dryRun: false);
+			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 
-		string MarzipanifyArchivedLibrary (string inArchivePath)
+		async Task<string> MarzipanifyArchivedLibrary (string inPath)
 		{
-			Console.WriteLine ($"Marzipanifying archive \"{Path.GetFileName (inArchivePath)}\"...");
-
-			var outArchivePath = inArchivePath;
-			//new Marzipanify ().ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inArchivePath);
-			return outArchivePath;
+			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 
 		void CopyAssemblies ()
