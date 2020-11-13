@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using maccat;
 
 namespace MacCatSdk
 {
@@ -13,6 +14,7 @@ namespace MacCatSdk
 		public string XamarinMacCatDirectory { get; set; } = Path.Combine (".", "xamarin-maccat");
 		readonly string inputAppDir;
 		readonly string outputAppDir;
+		readonly string outputExecutablePath;
 		readonly string projFile;
 		readonly string projDir;
 		readonly string binDir;
@@ -74,15 +76,18 @@ namespace MacCatSdk
 			executableAsmName = executableName + ".exe";
 
 			outputAppDir = Path.Combine (binDir, "MacCatalyst", configuration, APPNAME + ".app");
+			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 			Directory.CreateDirectory (outputAppDir);
+			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
 		}
 
 		public async Task RunAsync ()
 		{
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
-			if (!await CompileBinaryAsync ())
-				return;
+			await MarzipanifyExecutableAsync ();
+			//if (!await CompileBinaryAsync ())
+			//	return;
 			Console.WriteLine ($"Building \"{APPNAME}.app\"...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
@@ -91,6 +96,13 @@ namespace MacCatSdk
 
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.WriteLine ($"Built {outputAppDir}");
+		}
+
+		async Task MarzipanifyExecutableAsync ()
+		{
+			var p = Marzipanify (Path.Combine (inputAppDir, executableName));
+			File.Copy (p, outputExecutablePath, overwrite: true);
+			await ExecAsync ("chmod", $"+x \"{outputExecutablePath}\"");
 		}
 
 		async Task KillRunningApp ()
@@ -107,9 +119,9 @@ namespace MacCatSdk
 
 		async Task<bool> CompileBinaryAsync ()
 		{
-
 			//
 			// ENVIRONMENT VARIABLES
+			//
 			string CLANG;
 			try {
 				CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false, showError: false);
@@ -134,15 +146,14 @@ namespace MacCatSdk
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
 			//string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
-			string OUT = $"{outputAppDir}/Contents/MacOS/{executableName}";
-			Directory.CreateDirectory (Path.GetDirectoryName (OUT));
+			
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
-			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" "
-				+ string.Join (" ", GetArchivedLibraries ().Select (x => $"\"{x}\""));
+			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" ";
+			//LINKS += string.Join (" ", GetArchivedLibraries ().Select (x => $"\"{x}\""));
 
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 
-			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {OUT} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
+			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {outputExecutablePath} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine(clangArgs);
 			Console.WriteLine ($"Compiling native \"{executableName}\"...");
@@ -177,11 +188,18 @@ namespace MacCatSdk
 			return archives;
 		}
 
+		string Marzipanify (string inPath)
+		{
+			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			return new Marzipanify ().ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inPath, dryRun: false);
+		}
+
 		string MarzipanifyArchivedLibrary (string inArchivePath)
 		{
 			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inArchivePath)}\"...");
 
 			var outArchivePath = inArchivePath;
+			//new Marzipanify ().ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inArchivePath);
 			return outArchivePath;
 		}
 

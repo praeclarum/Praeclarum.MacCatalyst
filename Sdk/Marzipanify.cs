@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using maccat.MachO;
@@ -12,93 +13,120 @@ namespace maccat
 		{
 		}
 
-		unsafe string[] modifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte* macho, int sz, bool INJECT_MARZIPAN_GLUE = true, bool DRY_RUN = false)
+		public unsafe string ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
 		{
-			var dylibs = new List<string> ();
+			var bytes = File.ReadAllBytes (inPath);
+			string[] dsyms;
+			fixed (byte* p = bytes) {
+				dsyms = ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (p, bytes.Length, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+			}
+			if (!dryRun) {
+				var outPath = Path.GetTempFileName ();
+				File.WriteAllBytes (outPath, bytes);
+				return outPath;
+			}
+			return inPath;
+		}
 
-			var header_fat = (fat_header*)macho;
-			var imageHeaderPtr = (byte*)macho;
+		unsafe string[] ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte* fileBytes, int sz, bool injectMarzipanGlue, bool dryRun)
+		{
+			var header_fat = (fat_header*)fileBytes;
+			var ptr = (byte*)fileBytes;
 
 			long header64offset = 0;
 
+			//
+			// Read FAT if it's there
+			//
 			if (header_fat->magic == FAT.CIGAM || header_fat->magic == FAT.MAGIC) {
 				int narchs = OSSwapBigToHostInt32 (header_fat->nfat_arch);
-				imageHeaderPtr += sizeof (fat_header*);
+				ptr += sizeof (fat_header);
 
 				for (int i = 0; i < narchs; i++) {
-					fat_arch uarch = *(fat_arch*)imageHeaderPtr;
+					var uarch = *(fat_arch*)ptr;
 
-					if ((cpu_type_t)OSSwapBigToHostInt32 ((int)uarch.cputype) == cpu_type_t.X86_64) {
+					var cpuType = (cpu_type_t)OSSwapBigToHostInt32 ((int)uarch.cputype);
+
+					if (cpuType == MachO.cpu_type_t.X86_64) {
 						//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
 						header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
 						break;
 					}
-					else if ((cpu_type_t)OSSwapBigToHostInt32 ((int)uarch.cputype) == cpu_type_t.ARM64) {
-						//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
-						header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
-						break;
+					//else if (cpuType == MachO.cpu_type_t.ARM64) {
+					//	//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
+					//	header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
+					//	break;
+					//}
+					else {
+						ptr += sizeof (fat_arch);
 					}
-					else
-						imageHeaderPtr += sizeof (fat_arch);
 				}
 
 				if (header64offset == 0) {
-					throw new Exception ("ERROR: No X86_64 or ARM64 slice found.\n");
+					throw new Exception ("ERROR: No X86_64 slice found.\n");
 				}
 			}
 
-			imageHeaderPtr = (byte*)(macho + header64offset);
+			//
+			// Marz
+			//
+			return MarzMachO (ptr + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+		}
 
-			var header64 = (mach_header_64*)imageHeaderPtr;
+		unsafe string[] MarzMachO (byte *macho, bool injectMarzipanGlue, bool dryRun)
+		{
+			var ptr = macho;
+			var dylibs = new List<string> ();
+
+			var header64 = (mach_header_64*)ptr;
 
 			if (header64->magic != MH.MAGIC_64)
 				return Array.Empty<string> ();
 
-			imageHeaderPtr += sizeof (mach_header_64);
-			var command = (load_command*)(imageHeaderPtr);
+			ptr += sizeof (mach_header_64);
+			var command = (load_command*)(ptr);
 
 			for (int i = 0; i < header64->ncmds && header64->ncmds > 0; ++i) {
 				if (command->cmd == LC.LOAD_DYLIB) {
-					var ucmd = *(dylib_command*)imageHeaderPtr;
+					var ucmd = *(dylib_command*)ptr;
 					var offset = ucmd.dylib.name_offset;
 					var size = ucmd.cmdsize;
 
 					//printf("LC_LOAD_DYLIB %s\n", name);
-					if (Marshal.PtrToStringUTF8 (new IntPtr (imageHeaderPtr + offset), (int)size) is string name) {
+					if (Marshal.PtrToStringUTF8 (new IntPtr (ptr + offset)) is string name) {
 						dylibs.Add (name);
 					}
 				}
 				else if (command->cmd == LC.VERSION_MIN_IPHONEOS) {
-					if (INJECT_MARZIPAN_GLUE) {
+					if (injectMarzipanGlue) {
+						Console.ForegroundColor = ConsoleColor.Yellow;
 						Console.WriteLine ("WARNING: This binary was built with an earlier iOS SDK.");
+						Console.ResetColor ();
 					}
 					else {
-						Console.WriteLine ("ERROR: This binary was built with an earlier iOS SDK. As of macOS 10.14 beta 3, it needs to be rebuilt with a minimum deployment target of iOS 12.");
-						Console.WriteLine ("\nNOTE: iOSMac binaries require the LC_BUILD_VERSION load command to be present. This is added automatically by the linker when the minimum deployment target is iOS 12.0 or macOS 10.14, and cannot be added to existing binaries for older OSes. Use the INJECT_MARZIPAN_GLUE=1 environment variable to use code injection to attempt to work around this.\n\n");
+						Console.ForegroundColor = ConsoleColor.Red;
+						Console.WriteLine ("ERROR: This binary needs to be rebuilt with a minimum deployment target of iOS 12.");
+						Console.ResetColor ();
 					}
 
-					var ucmd = *(version_min_command*)imageHeaderPtr;
-					ucmd.cmd = LC.VERSION_MIN_MACOSX;
-					ucmd.sdk = 10 << 16 | 14 << 8 | 0;
-					ucmd.version = 10 << 16 | 14 << 8 | 0;
-
-					if (!DRY_RUN) {
-						//memcpy (imageHeaderPtr, &ucmd, ucmd.cmdsize);
+					var ucmd = (version_min_command*)ptr;
+					if (!dryRun) {
+						ucmd->cmd = LC.VERSION_MIN_MACOSX;
+						ucmd->sdk = 10 << 16 | 14 << 8 | 0;
+						ucmd->version = 10 << 16 | 14 << 8 | 0;
 					}
 				}
 				else if (command->cmd == LC.BUILD_VERSION) {
-					var ucmd = *(build_version_command*)imageHeaderPtr;
-					ucmd.platform = PLATFORM.MACCATALYST;
-					ucmd.minos = 12 << 16 | 0 << 8 | 0;
-					ucmd.sdk = 10 << 16 | 14 << 8 | 0;
-
-					if (!DRY_RUN) {
-						//memcpy (imageHeaderPtr, &ucmd, ucmd.cmdsize);
+					var ucmd = (build_version_command*)ptr;
+					if (!dryRun) {
+						ucmd->platform = PLATFORM.MACCATALYST;
+						ucmd->minos = 12 << 16 | 0 << 8 | 0;
+						ucmd->sdk = 10 << 16 | 14 << 8 | 0;
 					}
 				}
 
-				imageHeaderPtr += command->cmdsize;
-				command = (load_command*)imageHeaderPtr;
+				ptr += command->cmdsize;
+				command = (load_command*)ptr;
 			}
 
 			return dylibs.ToArray ();

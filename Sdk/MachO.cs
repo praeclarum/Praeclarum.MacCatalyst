@@ -5,7 +5,8 @@ using uint32_t = System.UInt32;
 
 namespace maccat.MachO
 {
-	// /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include/mach-o/loader.h
+	// /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include/mach-o
+
 	public static class NX
 	{
 		public static uint SwapLong (uint v)
@@ -16,16 +17,30 @@ namespace maccat.MachO
 		}
 	}
 
-	public static class FAT
+	public enum FAT : uint
 	{
-		public const uint MAGIC = 0xcafebabe;
-		public static readonly uint CIGAM = NX.SwapLong (0xcafebabe);
+		MAGIC = 0xcafebabe,
+		CIGAM = 0xbebafeca,
 	}
 
+	/*
+	 * This header file describes the structures of the file format for "fat"
+	 * architecture specific file (wrapper design).  At the begining of the file
+	 * there is one fat_header structure followed by a number of fat_arch
+	 * structures.  For each architecture in the file, specified by a pair of
+	 * cputype and cpusubtype, the fat_header describes the file offset, file
+	 * size and alignment in the file of the architecture specific member.
+	 * The padded bytes in the file to place each member on it's specific alignment
+	 * are defined to be read as zeros and can be left as "holes" if the file system
+	 * can support them as long as they read as zeros.
+	 *
+	 * All structures defined here are always written and read to/from disk
+	 * in big-endian order.
+	 */
 	[StructLayout (LayoutKind.Sequential)]
 	public struct fat_header
 	{
-		public uint magic;        /* FAT_MAGIC */
+		public FAT magic;        /* FAT_MAGIC */
 		public uint nfat_arch;    /* number of structs that follow */
 	};
 
