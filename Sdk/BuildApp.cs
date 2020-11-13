@@ -19,6 +19,7 @@ namespace MacCatSdk
 		readonly string cbinDir;
 		readonly string objDir;
 		readonly string cobjDir;
+		readonly string mtouchDir;
 		private readonly string configuration;
 		private readonly string fromPlatform;
 		readonly string executableAsmName;
@@ -65,6 +66,7 @@ namespace MacCatSdk
 
 			cbinDir = Path.GetDirectoryName (inputAppDir) ?? "";
 			cobjDir = cbinDir.Replace (this.binDir, this.objDir);
+			mtouchDir = Path.Combine (cobjDir, "mtouch-cache");
 
 			APPNAME = Path.GetFileNameWithoutExtension (inputAppDir);
 
@@ -105,7 +107,6 @@ namespace MacCatSdk
 
 		async Task<bool> CompileBinaryAsync ()
 		{
-			Console.WriteLine ($"Compiling native \"{executableName}\"...");
 
 			//
 			// ENVIRONMENT VARIABLES
@@ -135,14 +136,16 @@ namespace MacCatSdk
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
 			string OUT = $"{outputAppDir}/Contents/MacOS/{executableName}";
 			Directory.CreateDirectory (Path.GetDirectoryName (OUT));
-			string INCLUDES = $"-I{MONOMACCATDIR}/include/mono-2.0 -I{XAMMACCATDIR}/include";
-			string LINKS = $"{MONOMACCATDIR}/lib/libmonosgen-2.0.a {MONOMACCATDIR}/lib/libmono-native.a";
+			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
+			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" "
+				+ string.Join (" ", GetArchivedLibraries ().Select (x => $"\"{x}\""));
 
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {OUT} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine(clangArgs);
+			Console.WriteLine ($"Compiling native \"{executableName}\"...");
 			var r = await ExecAsync (CLANG, clangArgs);
 			//System.Console.WriteLine(r);
 			return true;
@@ -154,7 +157,7 @@ namespace MacCatSdk
 
 		string[] GetNativeEntryPoints ()
 		{
-			var path = Path.Combine (cobjDir, "mtouch-cache", "entry-points.txt");
+			var path = Path.Combine (mtouchDir, "entry-points.txt");
 			var lines = File.ReadAllLines (path);
 			return (from l in lines
 					let s = l.Split ('=')
@@ -162,6 +165,24 @@ namespace MacCatSdk
 					let e = s[1]
 					where !ignoreEntryPoints.Contains (e)
 					select s[1]).ToArray ();
+		}
+
+		string[] GetArchivedLibraries ()
+		{
+			var inArchives = (from a in Directory.GetFiles (mtouchDir, "*.a")
+					select a).ToArray ();
+
+			var archives = inArchives.Select (MarzipanifyArchivedLibrary).ToArray ();
+
+			return archives;
+		}
+
+		string MarzipanifyArchivedLibrary (string inArchivePath)
+		{
+			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inArchivePath)}\"...");
+
+			var outArchivePath = inArchivePath;
+			return outArchivePath;
 		}
 
 		void CopyAssemblies ()
