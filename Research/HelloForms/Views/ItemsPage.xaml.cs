@@ -22,6 +22,10 @@ namespace HelloForms.Views
             InitializeComponent();
 
             BindingContext = viewModel = new ItemsViewModel();
+
+			var v = new SkiaSharp.Views.Forms.SKCanvasView ();
+            v.BackgroundColor = Color.Beige;
+			Foo.Children.Add (v);
         }
 
         async void OnItemSelected(object sender, EventArgs args)

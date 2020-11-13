@@ -153,7 +153,7 @@ namespace maccat
 			var arXPath = Path.Combine (Path.GetTempPath (), arName + ".out");
 			await File.WriteAllBytesAsync (arPath, arBuffer[arIndex..(arIndex + arLength)]);
 			Directory.CreateDirectory (arXPath);
-			Console.WriteLine ("Extracting to " + arXPath);
+			//Console.WriteLine ("Extracting to " + arXPath);
 			await ArAsync ($"-o -x \"{arPath}\"", cd: arXPath);
 
 			var newOPaths = new List<string> ();

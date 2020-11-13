@@ -3,7 +3,9 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
     </ContentPage.ToolbarItems>
-    <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">
+    <StackLayout>
+        <StackLayout x:Name="Foo"></StackLayout>
+        <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">
         <CollectionView x:Name="ItemsCollectionView" ItemsSource="{Binding Items}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -19,4 +21,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
     </RefreshView>
+    </StackLayout>
 </ContentPage>
