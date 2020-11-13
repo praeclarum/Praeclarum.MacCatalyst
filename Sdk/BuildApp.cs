@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using maccat;
+using static maccat.Terminal;
 
 namespace MacCatSdk
 {
@@ -29,6 +30,8 @@ namespace MacCatSdk
 		readonly string APPNAME;
 
 		readonly string executableName;
+
+		readonly Marzipanify marzipanify;
 
 		public BuildApp (string projFile, string configuration, string platform)
 		{
@@ -79,10 +82,13 @@ namespace MacCatSdk
 			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 			Directory.CreateDirectory (outputAppDir);
 			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
+
+			marzipanify = new Marzipanify (outputAppDir);
 		}
 
 		public async Task RunAsync ()
 		{
+			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
 			await MarzipanifyExecutableAsync ();
@@ -100,7 +106,7 @@ namespace MacCatSdk
 
 		async Task MarzipanifyExecutableAsync ()
 		{
-			var p = Marzipanify (Path.Combine (inputAppDir, executableName));
+			var p = await MarzipanifyAsync (Path.Combine (inputAppDir, executableName));
 			File.Copy (p, outputExecutablePath, overwrite: true);
 			await ExecAsync ("chmod", $"+x \"{outputExecutablePath}\"");
 		}
@@ -119,25 +125,12 @@ namespace MacCatSdk
 
 		async Task<bool> CompileBinaryAsync ()
 		{
-			//
-			// ENVIRONMENT VARIABLES
-			//
-			string CLANG;
-			try {
-				CLANG = await ExecAsync ("xcrun", "-f clang", showOutput: false, showError: false);
-			}
-			catch {
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine ($"Couldn't run Xcode tools. Please run:");
-				Console.ResetColor ();
-				Console.WriteLine ("sudo xcode-select --switch /Applications/Xcode.app");
-				return false;
-			}
+			
 			string XAMMACCATDIR = Path.Combine (XamarinMacCatDirectory, "Xamarin.macOSCatalyst.sdk");
 			string MONOMACCATDIR = MonoMacCatDirectory;
 			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path", showOutput: false);
 			// COMPUTED VARIABLED
-			string CFLAGS = "-target x86_64-apple-ios13.0-macabi -Wno-unguarded-availability-new -std=c++14 -ObjC";
+			string CFLAGS = "-Wno-unguarded-availability-new -std=c++14 -ObjC";
 			string CFLAGS2 = "-lz -liconv -lc++ -x objective-c++ -stdlib=libc++";
 			string CFLAGS3 = $"-fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot {MACSDK}";
 			string DEFINES = "-D_THREAD_SAFE";
@@ -157,7 +150,7 @@ namespace MacCatSdk
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine(clangArgs);
 			Console.WriteLine ($"Compiling native \"{executableName}\"...");
-			var r = await ExecAsync (CLANG, clangArgs);
+			var r = await ClangAsync (clangArgs);
 			//System.Console.WriteLine(r);
 			return true;
 		}
@@ -188,15 +181,15 @@ namespace MacCatSdk
 			return archives;
 		}
 
-		string Marzipanify (string inPath)
+		async Task<string> MarzipanifyAsync (string inPath)
 		{
 			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
-			return new Marzipanify ().ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inPath, dryRun: false);
+			return await marzipanify.ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inPath, dryRun: false);
 		}
 
 		string MarzipanifyArchivedLibrary (string inArchivePath)
 		{
-			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inArchivePath)}\"...");
+			Console.WriteLine ($"Marzipanifying archive \"{Path.GetFileName (inArchivePath)}\"...");
 
 			var outArchivePath = inArchivePath;
 			//new Marzipanify ().ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (inArchivePath);
@@ -219,42 +212,7 @@ namespace MacCatSdk
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
-		async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true)
-		{
-			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
-			si.RedirectStandardOutput = true;
-			si.RedirectStandardError = true;
-			var p = System.Diagnostics.Process.Start (si);
-			string? line;
-			var sb = new StringBuilder ();
-			var sbe = new StringBuilder ();
-			var readOutTask = Task.Run (async () => {
-				while ((line = await p.StandardOutput.ReadLineAsync ()) != null) {
-					sb.Append (line);
-					if (showOutput) {
-						Console.ForegroundColor = line.Contains ("error", StringComparison.InvariantCultureIgnoreCase) ? ConsoleColor.Red : ConsoleColor.DarkGray;
-						Console.WriteLine (line);
-					}
-				}
-			});
-			var readErrorTask = Task.Run (async () => {
-				while ((line = await p.StandardError.ReadLineAsync ()) != null) {
-					sbe.Append (line);
-					if (showError) {
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine (line);
-					}
-				}
-			});
-			p.WaitForExit ();
-			await readOutTask;
-			await readErrorTask;
-			if (throwOnError && p.ExitCode != 0)
-				throw new Exception ($"{fileName} failed with code: {p.ExitCode}");
-			if (showOutput)
-				Console.ResetColor ();
-			return sb.ToString ();
-		}
+		
 
 		async Task AddInfoPListAsync ()
 		{

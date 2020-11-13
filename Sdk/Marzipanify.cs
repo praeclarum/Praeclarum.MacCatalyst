@@ -1,44 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using maccat.MachO;
+using static maccat.Terminal;
 
 namespace maccat
 {
 	public class Marzipanify
 	{
-		public Marzipanify ()
+		readonly Dictionary<string, string> NewDylibs = new Dictionary<string, string> ();
+		private readonly string outputAppDir;
+
+		public Marzipanify (string outputAppDir)
 		{
+			this.outputAppDir = outputAppDir;
 		}
 
-		public unsafe string ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
+		public async Task<string> ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
 		{
 			var bytes = File.ReadAllBytes (inPath);
-			string[] dsyms;
-			fixed (byte* p = bytes) {
-				dsyms = ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (p, bytes.Length, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
-			}
+
+			var dsyms = ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (bytes, bytes.Length, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+
 			if (!dryRun) {
 				var outPath = Path.GetTempFileName ();
 				File.WriteAllBytes (outPath, bytes);
+				await RenameDylibsAsync (outPath, dsyms);
 				return outPath;
 			}
 			return inPath;
 		}
 
-		unsafe string[] ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte* fileBytes, int sz, bool injectMarzipanGlue, bool dryRun)
-		{			
-			//
-			// Read FAT if it's there
-			//
-			var header64offset = FindFatOffset (fileBytes);
+		async Task RenameDylibsAsync (string outPath, string[] dsyms)
+		{
+			var args = "";
+			foreach (var d in dsyms) {
+				args += " " + await NewLinkerPathForLoadedDylib (d);
+			}
+			args += $" \"{outPath}\"";
+			await ExecAsync ("install_name_tool", args);
+		}
 
-			//
-			// Marz
-			//
-			return MarzMachO (fileBytes + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+		async Task<string> NewLinkerPathForLoadedDylib (string loadedDylib)
+		{
+			if (loadedDylib.StartsWith ("/System/iOSSupport"))
+				return "";
+
+			var possibleiOSMacDylibPath = Path.Combine ("/System/iOSSupport", loadedDylib[1..]);
+
+			if (File.Exists (possibleiOSMacDylibPath)) {
+				return $"-change \"{loadedDylib}\" \"{possibleiOSMacDylibPath}\"";
+			}
+
+			if (!File.Exists (loadedDylib)) {
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine ($"Warning: The library {Path.GetFileName (loadedDylib)} is not available.");
+				Console.ResetColor ();
+				possibleiOSMacDylibPath = await MakeDummyLibraryAsync (loadedDylib);
+				return $"-change \"{loadedDylib}\" \"@executable_path/../Frameworks/{Path.GetFileName (possibleiOSMacDylibPath)}\"";
+			}
+
+			return "";
+		}
+
+		async Task<string> MakeDummyLibraryAsync (string loadedDylib)
+		{
+			await Task.Yield ();
+
+			var name = Path.GetFileName (loadedDylib);
+
+			if (!NewDylibs.TryGetValue (name, out var outPath)) {
+				var outSrcPath = outPath + ".c";
+				File.WriteAllText (outSrcPath, $@"int dummy_{name}() {{ return 42; }}");
+				var fwsPath = Path.Combine (outputAppDir, "Contents", "Frameworks");
+				Directory.CreateDirectory (fwsPath);
+				outPath = Path.Combine (fwsPath, name + ".dylib");
+				await ClangAsync ($"-shared -fpic \"{outSrcPath}\" -o \"{outPath}\"");
+				NewDylibs[name] = outPath;
+			}
+
+			return outPath;
+		}
+
+		unsafe string[] ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte[] fileBytes, int sz, bool injectMarzipanGlue, bool dryRun)
+		{
+			fixed (byte* ptr = fileBytes) {
+				//
+				// Read FAT if it's there
+				//
+				var header64offset = FindFatOffset (ptr);
+
+				//
+				// MachO
+				//
+				return MarzMachO (ptr + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+			}
 		}
 
 		unsafe long FindFatOffset (byte* ptr)
@@ -75,7 +135,7 @@ namespace maccat
 			return 0;
 		}
 
-		unsafe string[] MarzMachO (byte *macho, bool injectMarzipanGlue, bool dryRun)
+		unsafe string[] MarzMachO (byte* macho, bool injectMarzipanGlue, bool dryRun)
 		{
 			var ptr = macho;
 			var dylibs = new List<string> ();
@@ -95,7 +155,7 @@ namespace maccat
 					var size = ucmd.cmdsize;
 
 					//printf("LC_LOAD_DYLIB %s\n", name);
-					if (Marshal.PtrToStringUTF8 (new IntPtr (ptr + offset)) is string name) {
+					if (Marshal.PtrToStringUTF8 (new IntPtr (ptr + offset)) is string name && !string.IsNullOrEmpty (name)) {
 						dylibs.Add (name);
 					}
 				}
