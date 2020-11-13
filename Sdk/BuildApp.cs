@@ -102,6 +102,8 @@ namespace MacCatSdk
 
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.WriteLine ($"Built {outputAppDir}");
+
+			await ExecAsync ("open", $"\"{outputAppDir}\"");
 		}
 
 		async Task MarzipanifyExecutableAsync ()
