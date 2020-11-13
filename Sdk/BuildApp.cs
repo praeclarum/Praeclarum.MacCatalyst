@@ -144,6 +144,10 @@ namespace MacCatSdk
 			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Select (x => $"\"{x}\""));
 
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
+			var emainPath = Path.Combine (mtouchDir, "x86_64", "main.m");
+			if (File.Exists (emainPath)) {
+				COMPILES = $"\"-Dxamarin_gc_pump=int __xamarin_gc_pump\" \"{emainPath}\"";
+			}
 
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {outputExecutablePath} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
