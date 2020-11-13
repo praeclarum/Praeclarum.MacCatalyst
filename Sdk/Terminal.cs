@@ -68,7 +68,7 @@ namespace maccat
 			await readOutTask;
 			await readErrorTask;
 			if (throwOnError && p.ExitCode != 0)
-				throw new Exception ($"{fileName} failed with code: {p.ExitCode}");
+				throw new Exception ($"{fileName} failed with exit code {p.ExitCode}");
 			if (showOutput)
 				Console.ResetColor ();
 			return sb.ToString ();

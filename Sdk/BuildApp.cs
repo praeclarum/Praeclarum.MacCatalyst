@@ -25,6 +25,7 @@ namespace MacCatSdk
 		readonly string mtouchDir;
 		private readonly string configuration;
 		private readonly string fromPlatform;
+		private readonly bool run;
 		readonly string executableAsmName;
 
 		readonly string APPNAME;
@@ -33,7 +34,7 @@ namespace MacCatSdk
 
 		readonly Marzipanify marzipanify;
 
-		public BuildApp (string projFile, string configuration, string platform)
+		public BuildApp (string projFile, string configuration, string platform, bool run)
 		{
 			this.projFile = Path.GetFullPath (projFile);
 			this.projDir = Path.GetDirectoryName (this.projFile) ?? throw new Exception ("Bad project file path");
@@ -42,7 +43,7 @@ namespace MacCatSdk
 
 			this.configuration = configuration;
 			this.fromPlatform = platform;
-
+			this.run = run;
 			var xbinDir = Path.Combine (binDir, fromPlatform, configuration);
 
 			var appDirs = new List<(string Path, DateTime Time)> ();
@@ -88,6 +89,7 @@ namespace MacCatSdk
 
 		public async Task RunAsync ()
 		{
+			Console.WriteLine ($"Converting \"{inputAppDir}\"...");
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
@@ -103,7 +105,9 @@ namespace MacCatSdk
 			Console.ForegroundColor = ConsoleColor.Green;
 			Console.WriteLine ($"Built {outputAppDir}");
 
-			await ExecAsync ("open", $"\"{outputAppDir}\"");
+			if (run) {
+				await ExecAsync ("open", $"\"{outputAppDir}\"");
+			}
 		}
 
 		async Task MarzipanifyExecutableAsync ()
@@ -161,7 +165,6 @@ namespace MacCatSdk
 		}
 
 		static readonly HashSet<string> ignoreEntryPoints = new HashSet<string> {
-			"mono_profiler_init_log",
 		};
 
 		string[] GetNativeEntryPoints ()

@@ -12,19 +12,23 @@ namespace MacCatSdk
 			var projFile = "";
 			var wantsHelp = false;
 			var config = "Release";
-			var platform = "iPhone";
+			var platform = "iPhoneSimulator";
+			var run = true;
 			var argc = args.Length;
 			for (var i = 0; i < argc; i++) {
 				var a = args[i];
 				if (a.EndsWith ("proj", StringComparison.InvariantCultureIgnoreCase)) {
 					projFile = a;
 				}
-				else if (a == "-h" || a == "--help") {
-					wantsHelp = true;
-				}
 				else if (a == "-c" || a == "--configuration" && i + 1 < argc) {
 					config = args[i + 1];
 					i++;
+				}
+				else if (a == "-h" || a == "--help") {
+					wantsHelp = true;
+				}
+				else if (a == "--no-run") {
+					run = false;
 				}
 				else if (a == "-p" || a == "--platform" && i + 1 < argc) {
 					platform = args[i + 1];
@@ -38,8 +42,10 @@ namespace MacCatSdk
 				Console.WriteLine ($"Example: maccat /Users/me/Projects/MyApp/MyApp.csproj");
 				Console.WriteLine ($"");
 				Console.WriteLine ($"Options:");
-				Console.WriteLine ($"  -c, --configuration <Release|Debug>");
-				Console.WriteLine ($"  -p, --platform <iPhone|iPhoneSimulator>");
+				Console.WriteLine ($"  -c, --configuration <Debug|Release>         The configuration to build from. The default is '{config}'.");
+				Console.WriteLine ($"  -h, --help                                  Show command line help.");
+				Console.WriteLine ($"  --no-run                                    Don't run then app after building.");
+				Console.WriteLine ($"  -p, --platform <iPhone|iPhoneSimulator>     The platform to build from. The default is '{platform}'.");
 				return wantsHelp ? 0 : 1;
 			}
 
@@ -54,15 +60,15 @@ namespace MacCatSdk
 			}
 
 			try {
-				await (new BuildApp (projFile, config, platform)).RunAsync ();
+				await (new BuildApp (projFile, config, platform, run)).RunAsync ();
 				return 0;
 
 			}
 			catch (Exception ex) {
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine (ex.Message);
-				Console.ForegroundColor = ConsoleColor.DarkRed;
-				Console.WriteLine (ex);
+				//Console.ForegroundColor = ConsoleColor.DarkRed;
+				//Console.WriteLine (ex);
 				return 10;
 			}
 		}
