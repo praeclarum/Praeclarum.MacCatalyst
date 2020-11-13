@@ -12,7 +12,7 @@ namespace HelloForms.Views
             InitializeComponent();
             //var v = new SkiaSharp.Views.Forms.SKCanvasView ();
 			//Console.WriteLine (v);
-            Console.WriteLine (Microsoft.AppCenter.AppCenter.SdkVersion);
+            //Console.WriteLine (Microsoft.AppCenter.AppCenter.SdkVersion);
         }
     }
 }

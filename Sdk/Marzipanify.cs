@@ -100,7 +100,7 @@ namespace maccat
 				var fwsPath = Path.Combine (outputAppDir, "Contents", "Frameworks");
 				Directory.CreateDirectory (fwsPath);
 				outPath = Path.Combine (fwsPath, name + ".dylib");
-				await ClangAsync ($"-shared -fpic \"{outSrcPath}\" -o \"{outPath}\"");
+				await ClangAsync ($"-dynamiclib \"{outSrcPath}\" -o \"{outPath}\"");
 				NewDylibs[name] = outPath;
 			}
 
@@ -213,16 +213,25 @@ namespace maccat
 							}
 						}
 
-						var ucmd = (version_min_command*)ptr;
 						if (!dryRun) {
-							ucmd->cmd = LC.VERSION_MIN_MACOSX;
-							ucmd->sdk = 10 << 16 | 14 << 8 | 0;
-							ucmd->version = 10 << 16 | 14 << 8 | 0;
+							if (sizeof (build_version_command) <= sizeof (version_min_command)) {
+								var ucmd = (build_version_command*)ptr;
+								ucmd->cmd = LC.BUILD_VERSION;
+								ucmd->platform = PLATFORM.MACCATALYST;
+								ucmd->minos = 12 << 16 | 0 << 8 | 0;
+								ucmd->sdk = 10 << 16 | 14 << 8 | 0;
+							}
+							else {
+								var vcmd = (version_min_command*)ptr;
+								vcmd->cmd = LC.VERSION_MIN_MACOSX;
+								vcmd->sdk = 10 << 16 | 14 << 8 | 0;
+								vcmd->version = 10 << 16 | 14 << 8 | 0;
+							}
 						}
 					}
 					else if (command->cmd == LC.BUILD_VERSION) {
-						var ucmd = (build_version_command*)ptr;
 						if (!dryRun) {
+							var ucmd = (build_version_command*)ptr;
 							ucmd->platform = PLATFORM.MACCATALYST;
 							ucmd->minos = 12 << 16 | 0 << 8 | 0;
 							ucmd->sdk = 10 << 16 | 14 << 8 | 0;

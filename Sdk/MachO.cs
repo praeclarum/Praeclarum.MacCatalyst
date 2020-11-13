@@ -276,9 +276,9 @@ namespace maccat.MachO
 };
 
 	/*
- * The version_min_command contains the min OS version on which this 
- * binary was built to run.
- */
+	 * The version_min_command contains the min OS version on which this 
+	 * binary was built to run.
+	 */
 	[StructLayout (LayoutKind.Sequential)]
 	public struct version_min_command
 	{
@@ -289,13 +289,13 @@ namespace maccat.MachO
 		public uint32_t cmdsize;   /* sizeof(struct min_version_command) */
 		public uint32_t version;   /* X.Y.Z is encoded in nibbles xxxx.yy.zz */
 		public uint32_t sdk;       /* X.Y.Z is encoded in nibbles xxxx.yy.zz */
-	};
+	}
 
 	/*
- * The build_version_command contains the min OS version on which this 
- * binary was built to run for its platform.  The list of known platforms and
- * tool values following it.
- */
+	 * The build_version_command contains the min OS version on which this 
+	 * binary was built to run for its platform.  The list of known platforms and
+	 * tool values following it.
+	 */
 	[StructLayout (LayoutKind.Sequential)]
 	public struct build_version_command
 	{
@@ -306,9 +306,7 @@ namespace maccat.MachO
 		public uint32_t minos;     /* X.Y.Z is encoded in nibbles xxxx.yy.zz */
 		public uint32_t sdk;       /* X.Y.Z is encoded in nibbles xxxx.yy.zz */
 		public uint32_t ntools;        /* number of tool entries following this */
-	};
-
-
+	}
 
 	/* Known values for the platform field above. */
 	public enum PLATFORM
