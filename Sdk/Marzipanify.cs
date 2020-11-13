@@ -29,15 +29,22 @@ namespace maccat
 		}
 
 		unsafe string[] ModifyMachHeaderAndReturnNSArrayOfLoadedDylibs (byte* fileBytes, int sz, bool injectMarzipanGlue, bool dryRun)
-		{
-			var header_fat = (fat_header*)fileBytes;
-			var ptr = (byte*)fileBytes;
-
-			long header64offset = 0;
-
+		{			
 			//
 			// Read FAT if it's there
 			//
+			var header64offset = FindFatOffset (fileBytes);
+
+			//
+			// Marz
+			//
+			return MarzMachO (fileBytes + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+		}
+
+		unsafe long FindFatOffset (byte* ptr)
+		{
+			var header_fat = (fat_header*)ptr;
+
 			if (header_fat->magic == FAT.CIGAM || header_fat->magic == FAT.MAGIC) {
 				int narchs = OSSwapBigToHostInt32 (header_fat->nfat_arch);
 				ptr += sizeof (fat_header);
@@ -49,8 +56,7 @@ namespace maccat
 
 					if (cpuType == MachO.cpu_type_t.X86_64) {
 						//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
-						header64offset = OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
-						break;
+						return OSSwapBigToHostInt32 (uarch.offset) - 32 + sizeof (mach_header_64);
 					}
 					//else if (cpuType == MachO.cpu_type_t.ARM64) {
 					//	//printf("mach_header_64 offset = %u\n", OSSwapBigToHostInt32(uarch.offset));
@@ -62,15 +68,11 @@ namespace maccat
 					}
 				}
 
-				if (header64offset == 0) {
-					throw new Exception ("ERROR: No X86_64 slice found.\n");
-				}
+				throw new Exception ("ERROR: No X86_64 slice found.\n");
 			}
 
-			//
-			// Marz
-			//
-			return MarzMachO (ptr + header64offset, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+			// Not FAT
+			return 0;
 		}
 
 		unsafe string[] MarzMachO (byte *macho, bool injectMarzipanGlue, bool dryRun)
