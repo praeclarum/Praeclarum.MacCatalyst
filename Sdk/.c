@@ -1,1 +1,0 @@
-int dummy_OpenGLES() { return 42; }

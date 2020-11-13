@@ -202,12 +202,15 @@ namespace MacCatSdk
 			var asmsOutDir = Path.Combine (outputAppDir, "Contents", "MonoBundle");
 			Directory.CreateDirectory (asmsOutDir);
 			void CopyAsm (string a) => File.Copy (a, Path.Combine (asmsOutDir, Path.GetFileName (a)), overwrite: true);
-			foreach (var a in Directory.GetFiles (ASSEMBLIES_DIR, "*.dll")) {
+			foreach (var a in Directory.GetFiles (LINKED_ASSEMBLIES_DIR, "*.dll")) {
 				CopyAsm (a);
 			}
-			foreach (var a in Directory.GetFiles (ASSEMBLIES_DIR, "*.exe")) {
+			foreach (var a in Directory.GetFiles (LINKED_ASSEMBLIES_DIR, "*.exe")) {
 				CopyAsm (a);
 			}
+			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "mscorlib.dll"));
+			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "System.dll"));
+			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "System.Core.dll"));
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
