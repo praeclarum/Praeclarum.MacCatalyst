@@ -45,6 +45,9 @@ namespace MacCatSdk
 			this.fromPlatform = platform;
 			this.run = run;
 			var xbinDir = Path.Combine (binDir, fromPlatform, configuration);
+			if (!Directory.Exists (xbinDir)) {
+				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
+			}
 
 			var appDirs = new List<(string Path, DateTime Time)> ();
 			void FindAppDirs (string dir)
@@ -80,9 +83,7 @@ namespace MacCatSdk
 			executableAsmName = executableName + ".exe";
 
 			outputAppDir = Path.Combine (binDir, "MacCatalyst", configuration, APPNAME + ".app");
-			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
-			Directory.CreateDirectory (outputAppDir);
-			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
+			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";			
 
 			marzipanify = new Marzipanify (outputAppDir);
 		}
@@ -93,6 +94,11 @@ namespace MacCatSdk
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
+
+			Directory.Delete (outputAppDir, recursive: true);
+			Directory.CreateDirectory (outputAppDir);
+			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
+
 			//await MarzipanifyExecutableAsync ();
 			if (!await CompileBinaryAsync ())
 				return;
@@ -152,8 +158,20 @@ namespace MacCatSdk
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 			var emainPath = Path.Combine (mtouchDir, "x86_64", "main.m");
 			if (File.Exists (emainPath)) {
+				//Console.WriteLine ("USE MAIN " + emainPath);
 				COMPILES = $"\"-Dxamarin_gc_pump=int __xamarin_gc_pump\" \"{emainPath}\"";
 			}
+			var shimsPath = Path.Combine (Path.GetTempPath (), "maccat-shims.m");
+			File.WriteAllText (shimsPath, @"
+#include ""xamarin/xamarin.h""
+extern ""C"" { void xamarin_create_classes_Xamarin_iOS() {} }
+extern ""C"" { void mono_profiler_init_log () {} }
+typedef void (*xamarin_profiler_symbol_def)();
+extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
+//xamarin_profiler_symbol_def xamarin_profiler_symbol = NULL;
+
+");
+			COMPILES += $" \"{shimsPath}\"";
 
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {outputExecutablePath} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);

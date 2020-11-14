@@ -67,7 +67,7 @@ namespace MacCatSdk
 			catch (Exception ex) {
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.WriteLine (ex.Message);
-				//Console.ForegroundColor = ConsoleColor.DarkRed;
+				//Console.ForegroundColor = ConsoleColor.DarkGray;
 				//Console.WriteLine (ex);
 				return 10;
 			}
