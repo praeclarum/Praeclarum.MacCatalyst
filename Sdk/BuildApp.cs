@@ -154,7 +154,6 @@ namespace MacCatSdk
 			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework Security -framework UIKit -framework GSS";
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
 			if (isDebug) {
-				Console.WriteLine ($"Including debug support");
 				XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat-debug.a";
 			}
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
@@ -187,7 +186,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o \"{outputExecutablePath}\" {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine (clangArgs);
-			Console.WriteLine ($"Compiling native \"{executableName}\"...");
+			Console.WriteLine ($"Compiling native \"{executableName}\" (debug={isDebug})...");
 			var r = await ClangAsync (clangArgs);
 			//System.Console.WriteLine(r);
 			return true;
