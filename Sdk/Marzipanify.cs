@@ -20,9 +20,14 @@ namespace maccat
 			this.outputAppDir = outputAppDir;
 		}
 
-		public Task<string> ModifyMachHeaderAsync (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
+		public async Task<string> ModifyMachHeaderAsync (string inPath, bool injectMarzipanGlue = false, bool dryRun = false)
 		{
-			return MarzFile (Path.GetFileName (inPath), inPath, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+			try {
+				return await MarzFile (Path.GetFileName (inPath), inPath, injectMarzipanGlue: injectMarzipanGlue, dryRun: dryRun);
+			}
+			catch (OldXcodeException) {
+				return "";
+			}
 		}
 
 		async Task<string> MarzFile (string name, string inPath, bool injectMarzipanGlue, bool dryRun)
@@ -207,10 +212,15 @@ namespace maccat
 						else {
 							if (!ios11Errors.Contains (machoName)) {
 								ios11Errors.Add (machoName);
+								Console.ForegroundColor = ConsoleColor.Yellow;
+								Console.Write ($"Warning: ");
 								Console.ForegroundColor = ConsoleColor.Red;
-								Console.WriteLine ($"Error: {machoName} needs to be rebuilt with a minimum deployment target of iOS 12.");
+								Console.Write (machoName);
+								Console.ForegroundColor = ConsoleColor.Yellow;
+								Console.WriteLine ($" needs to be rebuilt with a minimum deployment target of iOS 12.\n         Any code that uses it will crash.");
 								Console.ResetColor ();
 							}
+							throw new OldXcodeException ();
 						}
 
 						if (!dryRun) {
@@ -257,5 +267,9 @@ namespace maccat
 				return System.Net.IPAddress.HostToNetworkOrder ((int)v);
 			}
 		}
+	}
+
+	public class OldXcodeException : Exception
+	{
 	}
 }

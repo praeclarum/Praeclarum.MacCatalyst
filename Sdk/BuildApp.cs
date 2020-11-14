@@ -55,9 +55,9 @@ namespace MacCatSdk
 				if (Path.GetExtension (dir).ToLowerInvariant () == ".app") {
 					var times =
 						(from f in Directory.GetFiles (dir, "*.exe")
-						let t = new FileInfo(f).LastWriteTimeUtc
-						orderby t descending
-						select t).ToList ();
+						 let t = new FileInfo (f).LastWriteTimeUtc
+						 orderby t descending
+						 select t).ToList ();
 					if (times.Count > 0 && File.Exists (Path.Combine (dir, "Info.plist"))) {
 						appDirs.Add ((dir, times[0]));
 					}
@@ -83,7 +83,7 @@ namespace MacCatSdk
 			executableAsmName = executableName + ".exe";
 
 			outputAppDir = Path.Combine (binDir, "MacCatalyst", configuration, APPNAME + ".app");
-			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";			
+			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 
 			marzipanify = new Marzipanify (outputAppDir);
 		}
@@ -136,7 +136,7 @@ namespace MacCatSdk
 		}
 
 		async Task<bool> CompileBinaryAsync ()
-		{			
+		{
 			string XAMMACCATDIR = Path.Combine (XamarinMacCatDirectory, "Xamarin.macOSCatalyst.sdk");
 			string MONOMACCATDIR = MonoMacCatDirectory;
 			string MACSDK = await ExecAsync ("xcrun", "--show-sdk-path", showOutput: false);
@@ -150,10 +150,10 @@ namespace MacCatSdk
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
 			//string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
-			
+
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
 			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" ";
-			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Select (x => $"\"{x}\""));
+			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Where (x => !string.IsNullOrEmpty (x) && File.Exists (x)).Select (x => $"\"{x}\""));
 
 			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
 			var emainPath = Path.Combine (mtouchDir, "x86_64", "main.m");
@@ -200,7 +200,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 		Task<string[]> GetArchivedLibrariesAsync ()
 		{
 			var inArchives = (from a in Directory.GetFiles (mtouchDir, "*.a")
-					select a).ToArray ();
+							  select a).ToArray ();
 			return Task.WhenAll (inArchives.Select (MarzipanifyArchivedLibrary));
 		}
 
@@ -235,7 +235,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			CopyAsm (Path.Combine (XamarinMacCatDirectory, "Xamarin.iOS.dll"));
 		}
 
-		
+
 
 		async Task AddInfoPListAsync ()
 		{
