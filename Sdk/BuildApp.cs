@@ -95,7 +95,8 @@ namespace MacCatSdk
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
 
-			Directory.Delete (outputAppDir, recursive: true);
+			if (Directory.Exists (outputAppDir))
+				Directory.Delete (outputAppDir, recursive: true);
 			Directory.CreateDirectory (outputAppDir);
 			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
 
@@ -126,7 +127,7 @@ namespace MacCatSdk
 		async Task KillRunningApp ()
 		{
 			Console.WriteLine ($"Killing \"{executableName}\"...");
-			await ExecAsync ("killall", executableName, showError: false, showOutput: false, throwOnError: false);
+			await ExecAsync ("killall", $"\"{executableName}\"", showError: false, showOutput: false, throwOnError: false);
 		}
 
 		async Task BuildProjectAsync ()
@@ -146,16 +147,15 @@ namespace MacCatSdk
 			string CFLAGS3 = $"-fno-caret-diagnostics -fno-diagnostics-fixit-info -isysroot {MACSDK}";
 			string DEFINES = "-D_THREAD_SAFE";
 			// FRAMEWORKS="-framework AppKit -framework Foundation -framework Security -framework Carbon -framework GSS";
-			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework UIKit -framework GSS";
+			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework Security -framework UIKit -framework GSS";
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
-			//string US = "-u _xamarin_IntPtr_objc_msgSend_IntPtr -u _SystemNative_ConvertErrorPlatformToPal -u _SystemNative_ConvertErrorPalToPlatform -u _SystemNative_StrErrorR -u _SystemNative_GetNonCryptographicallySecureRandomBytes -u _SystemNative_Stat2 -u _SystemNative_LStat2 -u _xamarin_timezone_get_local_name -u _xamarin_timezone_get_data -u _xamarin_find_protocol_wrapper_type -u _xamarin_get_block_descriptor";
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
 
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
 			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" ";
 			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Where (x => !string.IsNullOrEmpty (x) && File.Exists (x)).Select (x => $"\"{x}\""));
 
-			string COMPILES = $"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\" catmain.m";
+			string COMPILES = $"\"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\"\" catmain.m";
 			var emainPath = Path.Combine (mtouchDir, "x86_64", "main.m");
 			if (File.Exists (emainPath)) {
 				//Console.WriteLine ("USE MAIN " + emainPath);
@@ -173,9 +173,9 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 ");
 			COMPILES += $" \"{shimsPath}\"";
 
-			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o {outputExecutablePath} {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
+			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o \"{outputExecutablePath}\" {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
-			//System.Console.WriteLine(clangArgs);
+			//System.Console.WriteLine (clangArgs);
 			Console.WriteLine ($"Compiling native \"{executableName}\"...");
 			var r = await ClangAsync (clangArgs);
 			//System.Console.WriteLine(r);
