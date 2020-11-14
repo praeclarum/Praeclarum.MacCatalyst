@@ -20,7 +20,9 @@ release: $(RELEASE_DIR)
 	cp -a $(XAMARIN_MACIOS)/_maccat-build/Library/Frameworks/Xamarin.iOS.framework/Versions/git/lib/64bits/Xamarin.iOS.dll $(RELEASE_DIR)/xamarin-maccat
 	mkdir -p ./Releases
 	rm -rf maccat-sdk ./Releases/$(SDK_NAME)
-	# cd $(RELEASE_DIR) && zip -r ../Releases/$(SDK_NAME) *
+
+release_zip: release
+	cd $(RELEASE_DIR) && zip -r ../Releases/$(SDK_NAME) *
 
 $(RELEASE_DIR):
 	mkdir -p $@

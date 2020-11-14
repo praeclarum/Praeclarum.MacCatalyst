@@ -9,6 +9,19 @@ namespace maccat
 		static string CLANG = "clang";
 		static string AR = "ar";
 
+		public static void Info (string message)
+		{
+			Console.ResetColor ();
+			Console.WriteLine (message);
+		}
+
+		public static void Warning (string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine (message);
+			Console.ResetColor ();
+		}
+
 		public static async Task FindToolPathsAsync ()
 		{
 			//

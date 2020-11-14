@@ -34,6 +34,8 @@ namespace MacCatSdk
 
 		readonly Marzipanify marzipanify;
 
+		readonly bool isDebug;
+
 		public BuildApp (string projFile, string configuration, string platform, bool run)
 		{
 			this.projFile = Path.GetFullPath (projFile);
@@ -86,6 +88,8 @@ namespace MacCatSdk
 			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 
 			marzipanify = new Marzipanify (outputAppDir);
+
+			isDebug = configuration != "Release";
 		}
 
 		public async Task RunAsync ()
@@ -149,6 +153,10 @@ namespace MacCatSdk
 			// FRAMEWORKS="-framework AppKit -framework Foundation -framework Security -framework Carbon -framework GSS";
 			string FRAMEWORKS = $"-iframework {MACSDK}/System/iOSSupport/System/Library/Frameworks -framework Foundation -framework Security -framework UIKit -framework GSS";
 			string XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat.a";
+			if (isDebug) {
+				Console.WriteLine ($"Including debug support");
+				XAMMACLIB = $"{XAMMACCATDIR}/lib/libxammaccat-debug.a";
+			}
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
 
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
@@ -160,6 +168,9 @@ namespace MacCatSdk
 			if (File.Exists (emainPath)) {
 				//Console.WriteLine ("USE MAIN " + emainPath);
 				COMPILES = $"\"-Dxamarin_gc_pump=int __xamarin_gc_pump\" \"{emainPath}\"";
+			}
+			else {
+				Warning ("Startup performance can be increased by using a simulator build.");
 			}
 			var shimsPath = Path.Combine (Path.GetTempPath (), "maccat-shims.m");
 			File.WriteAllText (shimsPath, @"
@@ -229,6 +240,11 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			foreach (var a in Directory.GetFiles (LINKED_ASSEMBLIES_DIR, "*.exe")) {
 				CopyAsm (a);
 			}
+			if (isDebug) {
+				foreach (var a in Directory.GetFiles (LINKED_ASSEMBLIES_DIR, "*.pdb")) {
+					CopyAsm (a);
+				}
+			}
 			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "mscorlib.dll"));
 			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "System.dll"));
 			CopyAsm (Path.Combine (ASSEMBLIES_DIR, "System.Core.dll"));
@@ -278,7 +294,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 		/// <summary>
 		/// https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories
 		/// </summary>
-		static void CopyResourcesRecur (string sourceDirName, string destDirName)
+		void CopyResourcesRecur (string sourceDirName, string destDirName, int depth)
 		{
 			// Get the subdirectories for the specified directory.
 			DirectoryInfo dir = new DirectoryInfo (sourceDirName);
@@ -289,7 +305,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 					+ sourceDirName);
 			}
 
-			DirectoryInfo[] dirs = dir.GetDirectories ();
+			DirectoryInfo[] subdirs = dir.GetDirectories ();
 
 			// If the destination directory doesn't exist, create it.       
 			Directory.CreateDirectory (destDirName);
@@ -298,31 +314,45 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			FileInfo[] files = dir.GetFiles ();
 			var srcFiles =
 				from f in files
+				let n = f.Name
 				let e = f.Extension.ToLowerInvariant ()
 				where e != ".arm64"
-				where e != ".dll"
+				where e != ".dll" || n.Contains (".resources.", StringComparison.InvariantCulture)
+				where e != ".pdb"
+				where e != ".mdb"
 				where e != ".exe"
 				where e != ".mobileprovision"
+				where n != executableName
+				where n != "PkgInfo"
+				where n != "Info.plist"
 				select f;
-			foreach (FileInfo file in srcFiles) {
-				string tempPath = Path.Combine (destDirName, file.Name);
-				file.CopyTo (tempPath, overwrite: true);
+			foreach (var file in srcFiles) {
+				string destPath = Path.Combine (destDirName, file.Name);
+				if (depth == 0 && file.Extension == ".config") {
+					destPath = Path.Combine (outputAppDir, "Contents", "MonoBundle", file.Name);
+				}
+				file.CopyTo (destPath, overwrite: true);
 			}
 
 			// If copying subdirectories, copy them and their contents to new location.
-			var srcDirs =
-				from f in dirs
-				where f.Name != "_CodeSignature"
-				select f;
-			foreach (DirectoryInfo subdir in srcDirs) {
-				string tempPath = Path.Combine (destDirName, subdir.Name);
-				CopyResourcesRecur (subdir.FullName, tempPath);
+			foreach (var subdir in subdirs) {
+				var destPath = Path.Combine (destDirName, subdir.Name);
+				if (depth == 0 && Directory.GetFiles (subdir.FullName, "*.resources.dll").Length > 0) {
+					destPath = Path.Combine (outputAppDir, "Contents", "MonoBundle", subdir.Name);
+				}
+				else if (depth == 0 && subdir.Name == "Frameworks") {
+					destPath = Path.Combine (outputAppDir, "Contents", subdir.Name);
+				}
+				else if (depth == 0 && subdir.Name == "_CodeSignature") {
+					destPath = Path.Combine (outputAppDir, "Contents", subdir.Name);
+				}
+				CopyResourcesRecur (subdir.FullName, destPath, depth + 1);
 			}
 		}
 
 		void AddResources ()
 		{
-			CopyResourcesRecur (inputAppDir, Path.Combine (outputAppDir, "Contents", "Resources"));
+			CopyResourcesRecur (inputAppDir, Path.Combine (outputAppDir, "Contents", "Resources"), 0);
 		}
 	}
 }
