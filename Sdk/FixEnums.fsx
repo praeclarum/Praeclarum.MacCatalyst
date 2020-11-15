@@ -66,12 +66,6 @@ let typesThatUseTheEnum =
 // Modify the methods
 //
 
-let convert (v : int) = v ^^^ 3
-
-convert 0 = 0
-convert 1 = 2
-convert 2 = 1
-convert 3 = 3
 
 // ldarg.3
 // ...
@@ -89,7 +83,7 @@ convert 3 = 3
 // end:     ..
 
 let modifyParameterValues (method : MethodDefinition) (param : ParameterDefinition) =
-    printfn "MODIFYING PARAM %s.%s/%s" method.DeclaringType.Name method.Name param.Name
+    //printfn "MODIFYING PARAM %s.%s/%s" method.DeclaringType.Name method.Name param.Name
 
     let body = method.Body
     let il = body.GetILProcessor()
@@ -99,7 +93,7 @@ let modifyParameterValues (method : MethodDefinition) (param : ParameterDefiniti
     let argIndex =
         if method.IsStatic then param.Index
         else param.Index + 1
-    printfn "! %s = ldarg.%O" param.Name argIndex
+    //printfn "! %s = ldarg.%O" param.Name argIndex
 
     while ip < body.Instructions.Count do
         let ins = body.Instructions.[ip]
@@ -134,7 +128,7 @@ let modifyParameterValues (method : MethodDefinition) (param : ParameterDefiniti
                 |]
             for c in code do
                 il.InsertBefore(ins, c)
-            printfn "  FOUND  %O" ins
+            //printfn "  FOUND  %O" ins
             //printfn "  FOUND  %O\n%A"  ins code
             ip <- ip + code.Length + 1
         else ip <- ip + 1
