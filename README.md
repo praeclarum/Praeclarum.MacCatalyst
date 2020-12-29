@@ -1,12 +1,13 @@
-# maccat
+# Praeclarum.MacCatalyst
 
-Mac Catalyst support for Xamarin.iOS by Frank Krueger.
+[[nuget](https://www.nuget.org/packages/Praeclarum.MacCatalyst/)]
+
+Mac Catalyst support for Xamarin.iOS by Frank A. Krueger.
 
 I am very pleased to provide this tool that will convert your iOS apps to
 Mac Catalyst apps. It is still an early version and some things may not
 work, but I have had a lot of success with my own apps.
 
-Thank you for supporting me, and let me know if it works for you!
 
 
 ## Requirements
@@ -30,7 +31,11 @@ sudo xcode-select --switch /Applications/Xcode.app
 
 ## Installation
 
-Add the nuget `Praeclarum.MacCatalyst` to your iOS project.
+Add the nuget [Praeclarum.MacCatalyst](https://www.nuget.org/packages/Praeclarum.MacCatalyst/) to your iOS project.
+
+```xml
+<PackageReference Include="Praeclarum.MacCatalyst" Version="1.0.0-beta2" />
+```
 
 That's it! Whenever you build, a Mac Catalyst version of your app will be put in:
 
