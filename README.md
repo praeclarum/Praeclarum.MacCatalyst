@@ -28,6 +28,26 @@ If that fails or is incorrect, you can set your version with:
 sudo xcode-select --switch /Applications/Xcode.app
 ```
 
+## Installation
+
+Add the nuget `Praeclarum.MacCatalyst` to your iOS project.
+
+That's it! Whenever you build, a Mac Catalyst version of your app will be put in:
+
+```
+bin/Praeclarum.MacCatalyst
+```
+
+### Autorun
+
+To automatically run the Mac Catalyst app whenever you build your app, set:
+
+```xml
+<MacCatalystAutoRun>true</MacCatalystAutoRun>
+```
+
+in a `PropertyGroup` in your project file.
+
 ## Usage
 
 To convert your iOS app to a Mac Catalyst app, run the `maccat` tool (script or .NET Core app):

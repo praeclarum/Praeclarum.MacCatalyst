@@ -25,7 +25,7 @@
       ProjectFile="$(MSBuildProjectFile)"
       ProjectOutputPath="$(OutputPath)"
       ProjectAssemblyName="$(AssemblyName)"
-      Run="true"/>
+      Run="$(MacCatalystAutoRun)"/>
 		<Touch Files="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp" AlwaysCreate="True" />
 	</Target>
 
