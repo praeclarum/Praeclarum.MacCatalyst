@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<UsingTask TaskName="PraeclarumMacCatalystBuildTask" AssemblyFile="$(MSBuildThisFileDirectory)Praeclarum.MacCatalyst.dll" />
+
+	<!-- InstrumentAssemblies -->
+	<PropertyGroup>
+		<CompileDependsOn>
+			$(CompileDependsOn);
+			PraeclarumMacCatalystTarget
+		</CompileDependsOn>
+	</PropertyGroup>
+
+	<Target Name="PraeclarumMacCatalystTarget"
+			DependsOnTargets="CopyFilesToOutputDirectory;_CompileToNative;_CopyAppExtensionsToBundle;_CodesignFrameworks;_CodesignAppBundle;_CopyResourcesToBundle;_CopyAppExtensionsToBundle;_CopyFilesMarkedCopyLocal;_CopyAppExtensionsToBundle;_ParseExtraMtouchArgs"
+			Condition="'$(_PraeclarumMacCatalystTargetAlreadyExecuted)'!='true'">
+		<PropertyGroup>
+			<_PraeclarumMacCatalystTargetAlreadyExecuted>true</_PraeclarumMacCatalystTargetAlreadyExecuted>
+		</PropertyGroup>
+		<PraeclarumMacCatalystBuildTask
+			InputFiles = "@(Compile)" />
+	</Target>
+
+</Project>
