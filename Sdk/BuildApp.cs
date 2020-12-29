@@ -94,7 +94,7 @@ namespace MacCatSdk
 			executableName = APPNAME;
 			executableAsmName = executableName + ".exe";
 
-			outputAppDir = Path.Combine (binDir, "Praeclarum.MacCatalyst", configuration, APPNAME + ".app");
+			outputAppDir = Path.Combine (cbinDir, "Praeclarum.MacCatalyst", APPNAME + ".app");
 			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 
 			marzipanify = new Marzipanify (outputAppDir);

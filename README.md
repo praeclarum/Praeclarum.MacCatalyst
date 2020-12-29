@@ -35,7 +35,7 @@ Add the nuget `Praeclarum.MacCatalyst` to your iOS project.
 That's it! Whenever you build, a Mac Catalyst version of your app will be put in:
 
 ```
-bin/Praeclarum.MacCatalyst
+bin/Platform/Configuration/Praeclarum.MacCatalyst/App.app
 ```
 
 ### Autorun
