@@ -18,7 +18,7 @@ namespace Praeclarum.MacCatalyst
 		public string ProjectOutputPath { get; set; } = "";
 		public string Configuration { get; set; } = "";
 		public string Platform { get; set; } = "";
-		public bool Enabled { get; set; } = false;
+		public bool Enabled { get; set; } = true;
 		public bool Run { get; set; } = false;
 		public ITaskItem[] InputFiles { get; set; } = Array.Empty<ITaskItem> ();
 
