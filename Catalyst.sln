@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "maccat", "Sdk\maccat.csproj", "{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,17 @@ Global
 		{6EC9AF00-0D52-4B6B-9BF0-A3A583651F72}.Release|x64.Build.0 = Release|Any CPU
 		{6EC9AF00-0D52-4B6B-9BF0-A3A583651F72}.Release|x86.ActiveCfg = Release|Any CPU
 		{6EC9AF00-0D52-4B6B-9BF0-A3A583651F72}.Release|x86.Build.0 = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|x64.Build.0 = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Debug|x86.Build.0 = Debug|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|x64.ActiveCfg = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|x64.Build.0 = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|x86.ActiveCfg = Release|Any CPU
+		{590FD0F9-5C9C-434A-A87B-BAFE4C27D8EF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

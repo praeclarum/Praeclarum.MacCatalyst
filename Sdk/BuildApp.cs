@@ -11,8 +11,8 @@ namespace MacCatSdk
 {
 	public class BuildApp
 	{
-		public string MonoMacCatDirectory { get; set; } = Path.Combine (".", "mono-maccat");
-		public string XamarinMacCatDirectory { get; set; } = Path.Combine (".", "xamarin-maccat");
+		public readonly string MonoMacCatDirectory;
+		public readonly string XamarinMacCatDirectory;
 		readonly string inputAppDir;
 		readonly string outputAppDir;
 		readonly string outputExecutablePath;
@@ -36,8 +36,13 @@ namespace MacCatSdk
 
 		readonly bool isDebug;
 
-		public BuildApp (string projFile, string configuration, string platform, bool run)
+		readonly string sdkPath;
+
+		public BuildApp (string projFile, string configuration, string platform, bool run, string sdkPath)
 		{
+			this.sdkPath = sdkPath;
+			MonoMacCatDirectory = Path.Combine (sdkPath, "mono-maccat");
+			XamarinMacCatDirectory = Path.Combine (sdkPath, "xamarin-maccat");
 			this.projFile = Path.GetFullPath (projFile);
 			this.projDir = Path.GetDirectoryName (this.projFile) ?? throw new Exception ("Bad project file path");
 			this.binDir = Path.Combine (projDir, "bin");
@@ -94,7 +99,7 @@ namespace MacCatSdk
 
 		public async Task RunAsync ()
 		{
-			Console.WriteLine ($"Converting \"{inputAppDir}\"...");
+			Info ($"Converting \"{inputAppDir}\"...");
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
@@ -107,16 +112,16 @@ namespace MacCatSdk
 			//await MarzipanifyExecutableAsync ();
 			if (!await CompileBinaryAsync ())
 				return;
-			Console.WriteLine ($"Building \"{APPNAME}.app\"...");
+			Info ($"Building \"{APPNAME}.app\"...");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
 			AddPkgInfo ();
 			AddResources ();
 
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine ($"Built {outputAppDir}");
+			Info ($"Built {outputAppDir}");
 
 			if (run) {
+				Info ($"Running \"{executableName}\"...");
 				await ExecAsync ("open", $"\"{outputAppDir}\"");
 			}
 		}
@@ -130,13 +135,13 @@ namespace MacCatSdk
 
 		async Task KillRunningApp ()
 		{
-			Console.WriteLine ($"Killing \"{executableName}\"...");
+			Info ($"Killing \"{executableName}\"...");
 			await ExecAsync ("killall", $"\"{executableName}\"", showError: false, showOutput: false, throwOnError: false);
 		}
 
 		async Task BuildProjectAsync ()
 		{
-			Console.WriteLine ($"Building \"{projFile}\"...");
+			Info ($"Building \"{projFile}\"...");
 			await ExecAsync ("msbuild", $"/p:Configuration={configuration} /p:Platform={fromPlatform} \"{projFile}\"", showOutput: true);
 		}
 
@@ -186,7 +191,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o \"{outputExecutablePath}\" {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine (clangArgs);
-			Console.WriteLine ($"Compiling native \"{executableName}\" (debug={isDebug})...");
+			Info ($"Compiling native \"{executableName}\" (debug={isDebug})...");
 			var r = await ClangAsync (clangArgs);
 			//System.Console.WriteLine(r);
 			return true;
@@ -216,13 +221,13 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 
 		async Task<string> MarzipanifyAsync (string inPath)
 		{
-			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
 			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 
 		async Task<string> MarzipanifyArchivedLibrary (string inPath)
 		{
-			Console.WriteLine ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
 			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 

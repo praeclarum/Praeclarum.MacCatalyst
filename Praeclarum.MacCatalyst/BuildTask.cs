@@ -8,7 +8,9 @@ namespace Praeclarum.MacCatalyst
 {
 	public class PraeclarumMacCatalystBuildTask : Task
 	{
+		public string SdkPath { get; set; } = "";
 		public string ProjectFile { get; set; } = "";
+		public string ProjectOutputPath { get; set; } = "";
 		public string Configuration { get; set; } = "";
 		public string Platform { get; set; } = "";
 		public bool Run { get; set; } = false;
@@ -16,14 +18,12 @@ namespace Praeclarum.MacCatalyst
 
 		public override bool Execute ()
 		{
-			Log.LogMessage ("Running");
 			Terminal.InfoFunc = m => Log.LogMessage (m);
 			Terminal.WarningFunc = m => Log.LogWarning (m);
 			Terminal.ErrorFunc = m => Log.LogError (m);
-			var builder = new BuildApp (ProjectFile, Configuration, Platform, Run);
+			var builder = new BuildApp (ProjectFile, Configuration, Platform, Run, SdkPath);
 			try {
 				builder.RunAsync ().Wait ();
-				Log.LogMessage ("Done");
 				return true;
 			}
 			catch (Exception ex) {
