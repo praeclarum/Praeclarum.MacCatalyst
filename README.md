@@ -48,26 +48,6 @@ To automatically run the Mac Catalyst app whenever you build your app, set:
 
 in a `PropertyGroup` in your project file.
 
-## Usage
-
-To convert your iOS app to a Mac Catalyst app, run the `maccat` tool (script or .NET Core app):
-
-```bash
-cd maccat-sdk-YYYYmmdd
-
-./maccat.sh /Path/To/Your/App.csproj
-```
-
-The tool will output a new `App.app` in the `$(ProjectDirectory)/bin/MacCatalyst/Release` directory. 
-
-### Specify Configuration and Platform to convert
-
-You can specify to different configurations and platforms on the command line:
-
-```bash
-./maccat.sh /Path/To/Your/App.csproj -c Debug -p iPhoneSimulator
-```
-
 ### Crash Details
 
 If your app crashes when running, it can be useful to see its output from the command line.
