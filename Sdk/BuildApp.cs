@@ -38,6 +38,10 @@ namespace MacCatSdk
 
 		readonly string sdkPath;
 
+		public string CodesignEntitlements { get; set; } = "";
+		public string CodesignProvision { get; set; } = "";
+		public string CodesignKey { get; set; } = "";
+
 		public BuildApp (string projFile, string configuration, string platform, bool run, string sdkPath, string assemblyNameHint = "", string outputPathHint = "")
 		{
 			this.sdkPath = sdkPath;
@@ -122,6 +126,10 @@ namespace MacCatSdk
 			await AddInfoPListAsync ();
 			AddPkgInfo ();
 			AddResources ();
+
+			if (!string.IsNullOrEmpty (CodesignEntitlements)) {
+				//await SignAppAsync ();
+			}
 
 			Info ($"Built {outputAppDir}");
 
@@ -383,6 +391,20 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 		void AddResources ()
 		{
 			CopyResourcesRecur (inputAppDir, Path.Combine (outputAppDir, "Contents", "Resources"), 0);
+		}
+
+		async Task SignAppAsync ()
+		{
+			var codesign = "/usr/bin/codesign";
+			var entitlementsPath = Path.Combine (cobjDir, "Entitlements.xcent");
+			if (File.Exists (entitlementsPath)) {
+				Info ($"Signing \"{APPNAME}.app\" with entitlements \"{entitlementsPath}\".");
+				var args = $"-v --force --timestamp=none --sign - --entitlements \"{entitlementsPath}\"  \"{outputAppDir}\"";
+				await ExecAsync (codesign, args);
+			}
+			else {
+				Warning ($"No signing entitlements found in \"{inputAppDir}\".");
+			}
 		}
 	}
 }

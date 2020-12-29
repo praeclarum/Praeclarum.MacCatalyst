@@ -18,6 +18,9 @@ namespace Praeclarum.MacCatalyst
 		public string ProjectOutputPath { get; set; } = "";
 		public string Configuration { get; set; } = "";
 		public string Platform { get; set; } = "";
+		public string CodesignEntitlements { get; set; } = "";
+		public string CodesignProvision { get; set; } = "";
+		public string CodesignKey { get; set; } = "";
 		public bool Enabled { get; set; } = true;
 		public bool Run { get; set; } = false;
 		public ITaskItem[] InputFiles { get; set; } = Array.Empty<ITaskItem> ();
@@ -34,7 +37,11 @@ namespace Praeclarum.MacCatalyst
 					return true;
 				}
 				var sdkPath = ExpandSdk ();
-				var builder = new BuildApp (ProjectFile, Configuration, Platform, Run, sdkPath, ProjectAssemblyName, ProjectOutputPath);
+				var builder = new BuildApp (ProjectFile, Configuration, Platform, Run, sdkPath, ProjectAssemblyName, ProjectOutputPath) {
+					CodesignEntitlements = CodesignEntitlements,
+					CodesignKey = CodesignKey,
+					CodesignProvision = CodesignProvision
+				};
 				builder.RunAsync ().Wait ();
 				return true;
 			}

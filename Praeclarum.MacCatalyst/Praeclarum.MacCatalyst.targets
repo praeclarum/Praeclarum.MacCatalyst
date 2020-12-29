@@ -23,8 +23,12 @@
 			ProjectFile="$(MSBuildProjectFile)"
 			ProjectOutputPath="$(OutputPath)"
 			ProjectAssemblyName="$(AssemblyName)"
-      Enabled="$(MacCatalystEnabled)"
-			Run="$(MacCatalystAutoRun)"/>
+			Enabled="$(MacCatalystEnabled)"
+			Run="$(MacCatalystAutoRun)"
+			CodesignEntitlements="$(CodesignEntitlements)"
+			CodesignProvision="$(CodesignProvision)"
+			CodesignKey="$(CodesignKey)"
+	/>
 	</Target>
 
 </Project>
