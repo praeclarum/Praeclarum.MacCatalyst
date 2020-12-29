@@ -4,7 +4,7 @@ set -x
 set -e
 
 
-PROJDIR=/Users/fak/Dropbox/Projects/Microcasts/Microcasts.iOS
+PROJDIR=$1
 
 dotnet build Praeclarum.MacCatalyst/Praeclarum.MacCatalyst.BuildTask.csproj
 cp Praeclarum.MacCatalyst/bin/Debug/netstandard2.1/Praeclarum.MacCatalyst.BuildTask.dll $PROJDIR

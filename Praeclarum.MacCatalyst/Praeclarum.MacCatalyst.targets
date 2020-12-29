@@ -23,6 +23,7 @@
 			ProjectFile="$(MSBuildProjectFile)"
 			ProjectOutputPath="$(OutputPath)"
 			ProjectAssemblyName="$(AssemblyName)"
+      Enabled="$(MacCatalystEnabled)"
 			Run="$(MacCatalystAutoRun)"/>
 	</Target>
 

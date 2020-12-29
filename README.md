@@ -48,6 +48,16 @@ To automatically run the Mac Catalyst app whenever you build your app, set:
 
 in a `PropertyGroup` in your project file.
 
+### Enabling and disabling
+
+Mac Catalyst is enabled by default. To disable it set:
+
+```xml
+<MacCatalystEnabled>false</MacCatalystEnabled>
+```
+
+in a `PropertyGroup` in your project file.
+
 ### Crash Details
 
 If your app crashes when running, it can be useful to see its output from the command line.

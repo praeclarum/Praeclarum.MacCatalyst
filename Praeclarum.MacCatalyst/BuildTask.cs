@@ -18,6 +18,7 @@ namespace Praeclarum.MacCatalyst
 		public string ProjectOutputPath { get; set; } = "";
 		public string Configuration { get; set; } = "";
 		public string Platform { get; set; } = "";
+		public bool Enabled { get; set; } = false;
 		public bool Run { get; set; } = false;
 		public ITaskItem[] InputFiles { get; set; } = Array.Empty<ITaskItem> ();
 
@@ -28,6 +29,10 @@ namespace Praeclarum.MacCatalyst
 			ErrorFunc = m => Log.LogError (m);
 			try {
 				Info ("Thanks for using Praeclarum.MacCatalyst. You can sponsor my work at: https://github.com/sponsors/praeclarum");
+				if (!Enabled) {
+					Info ("Not enabled. Set MacCatalystEnabled=true to enable.");
+					return true;
+				}
 				var sdkPath = ExpandSdk ();
 				var builder = new BuildApp (ProjectFile, Configuration, Platform, Run, sdkPath, ProjectAssemblyName, ProjectOutputPath);
 				builder.RunAsync ().Wait ();

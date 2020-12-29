@@ -83,9 +83,7 @@ namespace maccat
 			}
 
 			if (!File.Exists (loadedDylib)) {
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine ($"Warning: The library {Path.GetFileName (loadedDylib)} is not available.");
-				Console.ResetColor ();
+				Warning ($"The library {Path.GetFileName (loadedDylib)} is not available.");
 				possibleiOSMacDylibPath = await MakeDummyLibraryAsync (loadedDylib);
 				return $"-change \"{loadedDylib}\" \"@executable_path/../Frameworks/{Path.GetFileName (possibleiOSMacDylibPath)}\"";
 			}
@@ -205,20 +203,12 @@ namespace maccat
 					}
 					else if (command->cmd == LC.VERSION_MIN_IPHONEOS) {
 						if (injectMarzipanGlue) {
-							Console.ForegroundColor = ConsoleColor.Yellow;
-							Console.WriteLine ($"Warning: {machoName} was built with an earlier iOS SDK.");
-							Console.ResetColor ();
+							Warning ($"{machoName} was built with an earlier iOS SDK.");
 						}
 						else {
 							if (!ios11Errors.Contains (machoName)) {
 								ios11Errors.Add (machoName);
-								Console.ForegroundColor = ConsoleColor.Yellow;
-								Console.Write ($"Warning: ");
-								Console.ForegroundColor = ConsoleColor.Red;
-								Console.Write (machoName);
-								Console.ForegroundColor = ConsoleColor.Yellow;
-								Console.WriteLine ($" needs to be rebuilt with a minimum deployment target of iOS 12.\n         Any code that uses it will crash.");
-								Console.ResetColor ();
+								Warning ($"{machoName} needs to be rebuilt with a minimum deployment target of iOS 12. Any code that uses it will crash.");
 							}
 							throw new OldXcodeException ();
 						}
