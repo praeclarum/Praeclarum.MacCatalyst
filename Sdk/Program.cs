@@ -60,7 +60,7 @@ namespace MacCatSdk
 			}
 
 			try {
-				await (new BuildApp (projFile, config, platform, run)).RunAsync ();
+				await (new BuildApp (projFile, config, platform, run, ".")).RunAsync ();
 				return 0;
 
 			}

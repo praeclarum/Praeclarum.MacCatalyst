@@ -99,7 +99,7 @@ namespace MacCatSdk
 
 		public async Task RunAsync ()
 		{
-			Info ($"Converting \"{inputAppDir}\"...");
+			Info ($"Converting \"{inputAppDir}\".");
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
@@ -112,7 +112,7 @@ namespace MacCatSdk
 			//await MarzipanifyExecutableAsync ();
 			if (!await CompileBinaryAsync ())
 				return;
-			Info ($"Building \"{APPNAME}.app\"...");
+			Info ($"Building \"{APPNAME}.app\".");
 			CopyAssemblies ();
 			await AddInfoPListAsync ();
 			AddPkgInfo ();
@@ -121,8 +121,8 @@ namespace MacCatSdk
 			Info ($"Built {outputAppDir}");
 
 			if (run) {
-				Info ($"Running \"{executableName}\"...");
-				await ExecAsync ("open", $"\"{outputAppDir}\"");
+				Info ($"Running \"{executableName}\".");
+				await ExecAsync ("open", $"\"{outputAppDir}\"", waitForExit: false);
 			}
 		}
 
@@ -135,13 +135,13 @@ namespace MacCatSdk
 
 		async Task KillRunningApp ()
 		{
-			Info ($"Killing \"{executableName}\"...");
+			Info ($"Killing \"{executableName}\".");
 			await ExecAsync ("killall", $"\"{executableName}\"", showError: false, showOutput: false, throwOnError: false);
 		}
 
 		async Task BuildProjectAsync ()
 		{
-			Info ($"Building \"{projFile}\"...");
+			Info ($"Building \"{projFile}\".");
 			await ExecAsync ("msbuild", $"/p:Configuration={configuration} /p:Platform={fromPlatform} \"{projFile}\"", showOutput: true);
 		}
 
@@ -164,7 +164,7 @@ namespace MacCatSdk
 			string US = String.Join (" ", GetNativeEntryPoints ().Select (x => $"-u _{x}"));
 
 			string INCLUDES = $"\"-I{MONOMACCATDIR}/include/mono-2.0\" \"-I{XAMMACCATDIR}/include\"";
-			string LINKS = $"\"{MONOMACCATDIR}/lib/libmonosgen-2.0.a\" \"{MONOMACCATDIR}/lib/libmono-native.a\" ";
+			string LINKS = $"\"{XAMMACCATDIR}/lib/libmonosgen-2.0.a\" \"{XAMMACCATDIR}/lib/libmono-native.a\" ";
 			LINKS += string.Join (" ", (await GetArchivedLibrariesAsync ()).Where (x => !string.IsNullOrEmpty (x) && File.Exists (x)).Select (x => $"\"{x}\""));
 
 			string COMPILES = $"\"-DAPP_EXECUTABLE_NAME=\\\"{executableAsmName}\\\"\" catmain.m";
@@ -191,7 +191,7 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 			var clangArgs = $"{CFLAGS} {FRAMEWORKS} {US} {XAMMACLIB} -o \"{outputExecutablePath}\" {DEFINES} {INCLUDES} {LINKS} {CFLAGS2} {COMPILES} {CFLAGS3}";
 			//System.Console.WriteLine(CLANG);
 			//System.Console.WriteLine (clangArgs);
-			Info ($"Compiling native \"{executableName}\" (debug={isDebug})...");
+			Info ($"Compiling native \"{executableName}\" (debug={isDebug}).");
 			var r = await ClangAsync (clangArgs);
 			//System.Console.WriteLine(r);
 			return true;
@@ -221,13 +221,13 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 
 		async Task<string> MarzipanifyAsync (string inPath)
 		{
-			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\".");
 			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 
 		async Task<string> MarzipanifyArchivedLibrary (string inPath)
 		{
-			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\"...");
+			Info ($"Marzipanifying \"{Path.GetFileName (inPath)}\".");
 			return await marzipanify.ModifyMachHeaderAsync (inPath, dryRun: false);
 		}
 

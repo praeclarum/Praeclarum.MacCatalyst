@@ -58,15 +58,21 @@ namespace maccat
 			ExecAsync (CLANG, "-target x86_64-apple-ios13.0-macabi " + arguments,
 					   throwOnError: throwOnError, showOutput: showOutput, showError: showError, cd: cd);
 
-		public static async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true, string? cd = null)
+		public static async Task<string> ExecAsync (string fileName, string arguments, bool throwOnError = true, bool showOutput = true, bool showError = true, string? cd = null, bool waitForExit = true)
 		{
 			//Console.WriteLine ("{0} {1}", fileName, arguments);
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
+			if (!string.IsNullOrEmpty (cd))
+				si.WorkingDirectory = cd;
+
+			if (!waitForExit) {
+				System.Diagnostics.Process.Start (si);
+				return "";
+			}
+
 			si.UseShellExecute = false;
 			si.RedirectStandardOutput = true;
 			si.RedirectStandardError = true;
-			if (!string.IsNullOrEmpty (cd))
-				si.WorkingDirectory = cd;
 			var p = System.Diagnostics.Process.Start (si);
 			string? line;
 			var sb = new StringBuilder ();
