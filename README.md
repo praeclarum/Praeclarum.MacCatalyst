@@ -92,15 +92,3 @@ You can probably do it manually at the command line, but I haven't figured the i
 
 * **Extensions do not work**
 
-
-## Providing Feedback
-
-Please join the Discord: [https://discord.gg/R3zVzg6M3d](https://discord.gg/R3zVzg6M3d)
-
-You can contact me via:
-
-* Twitter at [@praeclarum](https://twitter.com/praeclarum)
-* Email at [fak@praeclarum.org](mailto:fak@praeclarum.org)
-
-
-
