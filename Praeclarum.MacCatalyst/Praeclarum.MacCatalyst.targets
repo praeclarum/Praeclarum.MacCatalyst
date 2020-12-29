@@ -11,6 +11,8 @@
 	</PropertyGroup>
 
 	<Target Name="PraeclarumMacCatalystTarget"
+			Inputs="@(Compile);@(BundleResource)"
+			Outputs="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp"
 			DependsOnTargets="CopyFilesToOutputDirectory;_CompileToNative;_CopyAppExtensionsToBundle;_CodesignFrameworks;_CodesignAppBundle;_CopyResourcesToBundle;_CopyAppExtensionsToBundle;_CopyFilesMarkedCopyLocal;_CopyAppExtensionsToBundle;_ParseExtraMtouchArgs"
 			Condition="'$(_PraeclarumMacCatalystTargetAlreadyExecuted)'!='true'">
 		<PropertyGroup>
@@ -18,6 +20,7 @@
 		</PropertyGroup>
 		<PraeclarumMacCatalystBuildTask
 			InputFiles = "@(Compile)" />
+		<Touch Files="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp" AlwaysCreate="True" />
 	</Target>
 
 </Project>

@@ -1,13 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.8.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\Sdk\*.cs" Exclude="..\Sdk\Program.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="Praeclarum.MacCatalyst.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.6.0" />
   </ItemGroup>
 </Project>
