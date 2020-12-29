@@ -80,13 +80,7 @@ namespace MacCatSdk
 					}
 				}
 			}
-			var hintDir = Path.Combine (projDir, outputPathHint.Replace ('\\', Path.DirectorySeparatorChar), assemblyNameHint + ".app");
-			if (Directory.Exists (hintDir)) {
-				appDirs.Add ((hintDir, DateTime.UtcNow));
-			}
-			else {
-				FindAppDirs (xbinDir);
-			}
+			FindAppDirs (xbinDir);
 			inputAppDir = (from x in appDirs orderby x.Time descending select x.Path).FirstOrDefault ();
 			if (string.IsNullOrEmpty (inputAppDir))
 				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
