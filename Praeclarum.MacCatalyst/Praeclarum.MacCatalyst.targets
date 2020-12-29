@@ -19,12 +19,12 @@
 			<_PraeclarumMacCatalystTargetAlreadyExecuted>true</_PraeclarumMacCatalystTargetAlreadyExecuted>
 		</PropertyGroup>
 		<PraeclarumMacCatalystBuildTask
-      SdkPath="/Users/fak/Dropbox/Projects/Catalyst/release_out"
       InputFiles="@(Compile)"
       Configuration="$(Configuration)"
       Platform="$(Platform)"
       ProjectFile="$(MSBuildProjectFile)"
       ProjectOutputPath="$(OutputPath)"
+      ProjectAssemblyName="$(AssemblyName)"
       Run="true"/>
 		<Touch Files="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp" AlwaysCreate="True" />
 	</Target>

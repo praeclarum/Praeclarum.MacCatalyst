@@ -18,8 +18,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="maccat-sdk-20201228.zip" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Praeclarum.MacCatalyst.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="maccat-sdk-20201228.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

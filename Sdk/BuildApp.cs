@@ -38,7 +38,7 @@ namespace MacCatSdk
 
 		readonly string sdkPath;
 
-		public BuildApp (string projFile, string configuration, string platform, bool run, string sdkPath)
+		public BuildApp (string projFile, string configuration, string platform, bool run, string sdkPath, string assemblyNameHint = "", string outputPathHint = "")
 		{
 			this.sdkPath = sdkPath;
 			MonoMacCatDirectory = Path.Combine (sdkPath, "mono-maccat");
@@ -51,7 +51,12 @@ namespace MacCatSdk
 			this.configuration = configuration;
 			this.fromPlatform = platform;
 			this.run = run;
+
 			var xbinDir = Path.Combine (binDir, fromPlatform, configuration);
+			if (!string.IsNullOrEmpty (outputPathHint)) {
+				var op = outputPathHint.Replace ('\\', Path.DirectorySeparatorChar);
+				xbinDir = Path.Combine (projDir, op);
+			}
 			if (!Directory.Exists (xbinDir)) {
 				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
 			}
@@ -75,7 +80,13 @@ namespace MacCatSdk
 					}
 				}
 			}
-			FindAppDirs (xbinDir);
+			var hintDir = Path.Combine (projDir, outputPathHint.Replace('\\', Path.DirectorySeparatorChar), assemblyNameHint + ".app");
+			if (Directory.Exists (hintDir)) {
+				appDirs.Add ((hintDir, DateTime.UtcNow));
+			}
+			else {
+				FindAppDirs (xbinDir);
+			}
 			inputAppDir = (from x in appDirs orderby x.Time descending select x.Path).FirstOrDefault ();
 			if (string.IsNullOrEmpty (inputAppDir))
 				throw new Exception ($"Failed to find built app. Please build your app with Configuration={configuration}, Platform={fromPlatform} before running this tool.");
@@ -99,6 +110,7 @@ namespace MacCatSdk
 
 		public async Task RunAsync ()
 		{
+			Info ($"Using SDK \"{sdkPath}\".");
 			Info ($"Converting \"{inputAppDir}\".");
 			await FindToolPathsAsync ();
 			//await BuildProjectAsync ();
