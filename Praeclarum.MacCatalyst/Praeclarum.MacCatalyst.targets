@@ -11,22 +11,19 @@
 	</PropertyGroup>
 
 	<Target Name="PraeclarumMacCatalystTarget"
-			Inputs="@(Compile);@(BundleResource)"
-			Outputs="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp"
 			DependsOnTargets="CopyFilesToOutputDirectory;_CompileToNative;_CopyAppExtensionsToBundle;_CodesignFrameworks;_CodesignAppBundle;_CopyResourcesToBundle;_CopyAppExtensionsToBundle;_CopyFilesMarkedCopyLocal;_CopyAppExtensionsToBundle;_ParseExtraMtouchArgs"
 			Condition="'$(_PraeclarumMacCatalystTargetAlreadyExecuted)'!='true'">
 		<PropertyGroup>
 			<_PraeclarumMacCatalystTargetAlreadyExecuted>true</_PraeclarumMacCatalystTargetAlreadyExecuted>
 		</PropertyGroup>
 		<PraeclarumMacCatalystBuildTask
-      InputFiles="@(Compile)"
-      Configuration="$(Configuration)"
-      Platform="$(Platform)"
-      ProjectFile="$(MSBuildProjectFile)"
-      ProjectOutputPath="$(OutputPath)"
-      ProjectAssemblyName="$(AssemblyName)"
-      Run="$(MacCatalystAutoRun)"/>
-		<Touch Files="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp" AlwaysCreate="True" />
+			InputFiles="@(Compile)"
+			Configuration="$(Configuration)"
+			Platform="$(Platform)"
+			ProjectFile="$(MSBuildProjectFile)"
+			ProjectOutputPath="$(OutputPath)"
+			ProjectAssemblyName="$(AssemblyName)"
+			Run="$(MacCatalystAutoRun)"/>
 	</Target>
 
 </Project>
