@@ -9,17 +9,31 @@ namespace maccat
 		static string CLANG = "clang";
 		static string AR = "ar";
 
+		public static Action<string>? InfoFunc;
+		public static Action<string>? WarningFunc;
+		public static Action<string>? ErrorFunc;
+
 		public static void Info (string message)
 		{
-			Console.ResetColor ();
-			Console.WriteLine (message);
+			if (InfoFunc != null) {
+				InfoFunc (message);
+			}
+			else {
+				Console.ResetColor ();
+				Console.WriteLine (message);
+			}
 		}
 
 		public static void Warning (string message)
 		{
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine (message);
-			Console.ResetColor ();
+			if (WarningFunc != null) {
+				WarningFunc (message);
+			}
+			else {
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine (message);
+				Console.ResetColor ();
+			}
 		}
 
 		public static async Task FindToolPathsAsync ()
@@ -32,10 +46,7 @@ namespace maccat
 				AR = await ExecAsync ("xcrun", "-f ar", showOutput: false, showError: false);
 			}
 			catch {
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine ($"Couldn't run Xcode tools. Please run:");
-				Console.ResetColor ();
-				Console.WriteLine ("sudo xcode-select --switch /Applications/Xcode.app");
+				throw new Exception ($"Couldn't find Xcode tools. Please run: sudo xcode-select --switch /Applications/Xcode.app");
 			}
 		}
 
@@ -51,6 +62,7 @@ namespace maccat
 		{
 			//Console.WriteLine ("{0} {1}", fileName, arguments);
 			var si = new System.Diagnostics.ProcessStartInfo (fileName, arguments);
+			si.UseShellExecute = false;
 			si.RedirectStandardOutput = true;
 			si.RedirectStandardError = true;
 			if (!string.IsNullOrEmpty (cd))
@@ -72,8 +84,13 @@ namespace maccat
 				while ((line = await p.StandardError.ReadLineAsync ()) != null) {
 					sbe.Append (line);
 					if (showError) {
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine (line);
+						if (ErrorFunc != null) {
+							ErrorFunc (line);
+						}
+						else {
+							Console.ForegroundColor = ConsoleColor.Red;
+							Console.WriteLine (line);
+						}
 					}
 				}
 			});

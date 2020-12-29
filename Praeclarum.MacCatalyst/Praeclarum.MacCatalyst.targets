@@ -19,7 +19,11 @@
 			<_PraeclarumMacCatalystTargetAlreadyExecuted>true</_PraeclarumMacCatalystTargetAlreadyExecuted>
 		</PropertyGroup>
 		<PraeclarumMacCatalystBuildTask
-			InputFiles = "@(Compile)" />
+			InputFiles="@(Compile)"
+      Configuration="$(Configuration)"
+      Platform="$(Platform)"
+      ProjectFIle="$(MSBuildProjectFile)"
+      Run="true"/>
 		<Touch Files="$(IntermediateOutputPath)_PraeclarumMacCatalyst.stamp" AlwaysCreate="True" />
 	</Target>
 
