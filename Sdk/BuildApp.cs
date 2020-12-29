@@ -116,8 +116,7 @@ namespace MacCatSdk
 			//await BuildProjectAsync ();
 			await KillRunningApp ();
 
-			if (Directory.Exists (outputAppDir))
-				Directory.Delete (outputAppDir, recursive: true);
+			DeleteExistingApp ();
 			Directory.CreateDirectory (outputAppDir);
 			Directory.CreateDirectory (Path.GetDirectoryName (outputExecutablePath));
 
@@ -135,6 +134,20 @@ namespace MacCatSdk
 			if (run) {
 				Info ($"Running \"{executableName}\".");
 				await ExecAsync ("open", $"\"{outputAppDir}\"", waitForExit: false);
+			}
+		}
+
+		void DeleteExistingApp ()
+		{
+			if (Directory.Exists (outputAppDir)) {
+				var dirs = new[] {
+					Path.Combine(outputAppDir, "Contents"),
+				};
+				foreach (var d in dirs) {
+					if (Directory.Exists (d)) {
+						Directory.Delete (d, recursive: true);
+					}
+				}
 			}
 		}
 
