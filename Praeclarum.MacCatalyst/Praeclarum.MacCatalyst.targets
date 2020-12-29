@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<UsingTask TaskName="PraeclarumMacCatalystBuildTask" AssemblyFile="$(MSBuildThisFileDirectory)Praeclarum.MacCatalyst.dll" />
+	<UsingTask TaskName="PraeclarumMacCatalystBuildTask" AssemblyFile="$(MSBuildThisFileDirectory)Praeclarum.MacCatalyst.BuildTask.dll" />
 
 	<!-- InstrumentAssemblies -->
 	<PropertyGroup>

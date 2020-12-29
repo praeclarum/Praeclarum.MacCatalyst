@@ -1,3 +1,5 @@
+*.DS_Store
+
 /Praeclarum.MacCatalyst/maccat-sdk*.zip
 
 /Sdk/mono-maccat
