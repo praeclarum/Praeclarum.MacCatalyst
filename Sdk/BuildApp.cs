@@ -80,7 +80,7 @@ namespace MacCatSdk
 					}
 				}
 			}
-			var hintDir = Path.Combine (projDir, outputPathHint.Replace('\\', Path.DirectorySeparatorChar), assemblyNameHint + ".app");
+			var hintDir = Path.Combine (projDir, outputPathHint.Replace ('\\', Path.DirectorySeparatorChar), assemblyNameHint + ".app");
 			if (Directory.Exists (hintDir)) {
 				appDirs.Add ((hintDir, DateTime.UtcNow));
 			}
@@ -316,6 +316,13 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 		void AddPkgInfo ()
 		{
 			var src = Path.Combine (inputAppDir, "PkgInfo");
+			if (!File.Exists (src)) {
+				//Console.WriteLine ("SYNTH PKGINFO");
+				src = Path.Combine (Path.GetTempPath (), "MacCatPkgInfo");
+				if (File.Exists (src))
+					File.Delete (src);
+				File.WriteAllBytes (src, new byte[] { 0x41, 0x50, 0x50, 0x4C, 0x3F, 0x3F, 0x3F, 0x3F });
+			}
 			var dest = Path.Combine (outputAppDir, "Contents", "PkgInfo");
 			File.Copy (src, dest, overwrite: true);
 		}

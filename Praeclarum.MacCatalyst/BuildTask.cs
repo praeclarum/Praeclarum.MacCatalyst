@@ -27,6 +27,7 @@ namespace Praeclarum.MacCatalyst
 			WarningFunc = m => Log.LogWarning (m);
 			ErrorFunc = m => Log.LogError (m);
 			try {
+				Info ("Thanks for using Praeclarum.MacCatalyst. You can sponsor my work at: https://github.com/sponsors/praeclarum");
 				var sdkPath = ExpandSdk ();
 				var builder = new BuildApp (ProjectFile, Configuration, Platform, Run, sdkPath, ProjectAssemblyName, ProjectOutputPath);
 				builder.RunAsync ().Wait ();
