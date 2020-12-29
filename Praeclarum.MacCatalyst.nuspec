@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Praeclarum.MacCatalyst</id>
+    <version>1.0-beta1</version>
+    <title>Praeclarum.MacCatalyst</title>
+    <authors>praeclarum</authors>
+    <owners>praeclarum</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Convert your Xamarin.iOS apps to Mac Catalyst apps by adding this nuget.</description>
+    <tags>maccatalyst,mac,catalyst,xamarin,ios,praeclarum,uikit</tags>
+    <dependencies>
+      <group targetFramework="xamarinios10">
+      </group>
+    </dependencies>
+</metadata>
+  <files>
+    <file src="Praeclarum.MacCatalyst/bin/Release/netstandard2.1/Praeclarum.MacCatalyst.targets" target="build/xamarinios10/Praeclarum.MacCatalyst.targets" />
+    <file src="Praeclarum.MacCatalyst/bin/Release/netstandard2.1/Praeclarum.MacCatalyst.BuildTask.dll" target="build/xamarinios10/Praeclarum.MacCatalyst.BuildTask.dll" />
+    <file src="_._" target="lib/xamarinios10/_._" />
+  </files>
+</package>

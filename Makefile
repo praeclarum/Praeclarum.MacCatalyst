@@ -32,7 +32,12 @@ $(HACKED_XAMARIN_DLL): $(IN_XAMARIN_DLL)
 $(RELEASE_DIR):
 	mkdir -p $@
 
-
+nuget: #release_zip
+	dotnet build -c Release Praeclarum.MacCatalyst/Praeclarum.MacCatalyst.BuildTask.csproj
+	rm -f _._
+	touch _._
+	nuget pack Praeclarum.MacCatalyst.nuspec
+	rm _._
 
 
 
