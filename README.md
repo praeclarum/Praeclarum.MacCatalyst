@@ -92,3 +92,21 @@ You can probably do it manually at the command line, but I haven't figured the i
 
 * **Extensions do not work**
 
+* **Signing and Entitlements do not work**
+
+
+## How it Works
+
+This tool takes your already-compiled Xamarin.iOS .app and converts it to a macOS app by:
+
+1. Recompiling your main.m linking against Mac Catalyst builds of Xamarin and mono
+2. Modify external native library dependencies to run on macOS.
+3. Repackaging your .app to match the layout of a macOS .app
+
+Step 2 is only performed for libraries compiled with old versions of Xcode.
+It's only possible thanks to the wonderful work of [Steven Troughton-Smith and his Marzipanify tool](https://github.com/steventroughtonsmith/marzipanify).
+
+
+## Contributing
+
+You are welcome to contribute! Please open a PR.

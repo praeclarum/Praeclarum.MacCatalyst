@@ -10,6 +10,9 @@ using static maccat.Terminal;
 
 namespace maccat
 {
+	/// <summary>
+	/// Based on https://github.com/steventroughtonsmith/marzipanify/blob/master/marzipanify/main.m
+	/// </summary>
 	public class Marzipanify
 	{
 		readonly Dictionary<string, string> NewDylibs = new Dictionary<string, string> ();
