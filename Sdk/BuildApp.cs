@@ -42,6 +42,8 @@ namespace MacCatSdk
 		public string CodesignProvision { get; set; } = "";
 		public string CodesignKey { get; set; } = "";
 
+		const string GeneratedOutputDirectoryName = "Praeclarum.MacCatalyst";
+
 		public BuildApp (string projFile, string configuration, string platform, bool run, string sdkPath, string assemblyNameHint = "", string outputPathHint = "")
 		{
 			this.sdkPath = sdkPath;
@@ -68,6 +70,10 @@ namespace MacCatSdk
 			var appDirs = new List<(string Path, DateTime Time)> ();
 			void FindAppDirs (string dir)
 			{
+				if (Path.GetFileName (dir) == GeneratedOutputDirectoryName) {
+					// Ignore our own output
+					return;
+				}
 				if (Path.GetExtension (dir).ToLowerInvariant () == ".app") {
 					var times =
 						(from f in Directory.GetFiles (dir, "*.exe")
@@ -98,7 +104,7 @@ namespace MacCatSdk
 			executableName = APPNAME;
 			executableAsmName = executableName + ".exe";
 
-			outputAppDir = Path.Combine (cbinDir, "Praeclarum.MacCatalyst", APPNAME + ".app");
+			outputAppDir = Path.Combine (cbinDir, GeneratedOutputDirectoryName, APPNAME + ".app");
 			outputExecutablePath = $"{outputAppDir}/Contents/MacOS/{executableName}";
 
 			marzipanify = new Marzipanify (outputAppDir);
