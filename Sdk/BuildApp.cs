@@ -367,10 +367,11 @@ extern xamarin_profiler_symbol_def xamarin_profiler_symbol;
 				where e != ".exe"
 				where e != ".mobileprovision"
 				where n != executableName
-				where n != "PkgInfo"
-				where n != "Info.plist"
+				where !(depth == 0 && n == "PkgInfo")
+				where !(depth == 0 && n == "Info.plist")
 				select f;
 			foreach (var file in srcFiles) {
+				//Console.WriteLine ($"DEPTH={depth} FILE={file}");
 				string destPath = Path.Combine (destDirName, file.Name);
 				if (depth == 0 && file.Extension == ".config") {
 					destPath = Path.Combine (outputAppDir, "Contents", "MonoBundle", file.Name);
