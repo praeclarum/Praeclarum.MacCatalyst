@@ -34,7 +34,7 @@ sudo xcode-select --switch /Applications/Xcode.app
 Add the nuget [Praeclarum.MacCatalyst](https://www.nuget.org/packages/Praeclarum.MacCatalyst/) to your iOS project.
 
 ```xml
-<PackageReference Include="Praeclarum.MacCatalyst" Version="1.0.0-beta2" />
+<PackageReference Include="Praeclarum.MacCatalyst" Version="1.0.0-beta3" />
 ```
 
 That's it! Whenever you build, a Mac Catalyst version of your app will be put in:
